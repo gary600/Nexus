@@ -58,7 +58,8 @@ class NexusClasses : JavaPlugin() {
         server.pluginManager.registerEvents(ClassesListener(this, enchant), this)
 
         // Start tasks
-        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10) // Apply damage every 10 ticks
         BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20) // Every 20 ticks
+        MinerNightVisionTask(this).runTaskTimer(this, 0, 10) // Every 10 ticks
+        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10) // Apply damage every 10 ticks
     }
 }

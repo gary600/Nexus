@@ -95,8 +95,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         }
     }
 
-    // Builder Weakness: Burn in sun w/o helmet
-    //TODO
+    // Builder sun weakness in BuilderSunlightWeaknessTask
 
     // Miner Perk: Certain ores additionally drop emerald
     @EventHandler
@@ -111,9 +110,6 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             plugin.sendPerkMessage(event.player, "[NexusClasses] Miner perk: Free emerald!")
         }
     }
-
-    // Miner Perk: Night vision below y=60
-    //TODO
 
     // Miner Weakness: Extra damage from zombies [DONE]
     @EventHandler
@@ -145,14 +141,13 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             )
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
+            event.damage += 6 // equivalent to Strength II
             plugin.sendPerkMessage(damager, "[NexusClasses] Warrior perk: Enemy ignited!")
         }
     }
 
-    // Warrior perk: Holding gold weapons gives strength II
-    //TODO
-
     // Warrior perk: Wearing gold armor gives fire immunity [DONE w/ changes]
+    //TODO actually check armor lol
     @EventHandler
     fun warriorFireResist(event: EntityDamageEvent) {
         val entity = event.entity
@@ -198,6 +193,8 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             }
         }
     }
+
+    // Artist weakness in ArtistWaterAllergyTask
 
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
