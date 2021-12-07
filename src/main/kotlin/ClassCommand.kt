@@ -4,28 +4,30 @@ package xyz.gary600.nexusclasses
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
+import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 @CommandAlias("nexusclass|class")
-class ClassCommand(private val plugin: NexusClasses) : BaseCommand() {
+class ClassCommand(private val plugin: NexusClasses, private val classItemEnchantment: ClassItemEnchantment) : BaseCommand() {
     @Subcommand("choose|select")
     @Description("Select your class")
     @Syntax("<class>")
     @CommandPermission("nexusclasses.choose")
-    fun commandChoose(player: Player, _class: Class) {
-        plugin.getPlayerData(player.uniqueId)._class = _class
-        player.sendMessage("[NexusClasses] Set class to ${_class.name}")
+    fun commandChoose(player: Player, nexusClass: NexusClass) {
+        plugin.getPlayerData(player.uniqueId).nexusClass = nexusClass
+        player.sendMessage("[NexusClasses] Set class to ${nexusClass.name}")
     }
 
     @Subcommand("set")
-    @Description("Set a player's class")
-    @Syntax("<player> <class>")
+    @Description("Set another player's class")
+    @Syntax("<class> <player>")
     @CommandPermission("nexusclasses.set")
-    fun commandSet(sender: CommandSender, _class: Class, player: Player) {
-        plugin.getPlayerData(player.uniqueId)._class = _class
-        sender.sendMessage("[NexusClasses] Your class has been set to ${_class.name}")
-        sender.sendMessage("[NexusClasses] Set ${player.displayName}'s class to ${_class.name}")
+    fun commandSet(sender: CommandSender, nexusClass: NexusClass, player: Player) {
+        plugin.getPlayerData(player.uniqueId).nexusClass = nexusClass
+        sender.sendMessage("[NexusClasses] Your class has been set to ${nexusClass.name}")
+        sender.sendMessage("[NexusClasses] Set ${player.displayName}'s class to ${nexusClass.name}")
     }
 
     @Subcommand("get")
@@ -37,10 +39,48 @@ class ClassCommand(private val plugin: NexusClasses) : BaseCommand() {
                 sender.sendMessage("[NexusClasses] Must supply a player when on console")
                 return
             }
-            sender.sendMessage("[NexusClasses] Your class is ${plugin.getPlayerData(sender.uniqueId)._class}")
+            sender.sendMessage("[NexusClasses] Your class is ${plugin.getPlayerData(sender.uniqueId).nexusClass}")
         }
         else {
-            sender.sendMessage("[NexusClasses] ${player.displayName}'s class is ${plugin.getPlayerData(player.uniqueId)._class}")
+            sender.sendMessage("[NexusClasses] ${player.displayName}'s class is ${plugin.getPlayerData(player.uniqueId).nexusClass}")
+        }
+    }
+
+    @Subcommand("item")
+    @Description("Gives the class item if it exists and you don't have it already")
+    fun commandItem(player: Player) {
+        when (val nexusClass = plugin.getPlayerData(player.uniqueId).nexusClass) {
+            NexusClass.Builder -> giveClassItem(player, Material.STICK, "[Builder] Transmute")
+            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "[Artist] Planar Blink]")
+            else -> {
+                player.sendMessage("[NexusClasses] Class $nexusClass doesn't have a class item")
+            }
+        }
+    }
+
+    // Helper function to give an enchanted class item
+    private fun giveClassItem(player: Player, type: Material, displayName: String) {
+        val item = ItemStack(type, 1)
+        item.addUnsafeEnchantment(classItemEnchantment, 1)
+        val meta = item.itemMeta
+        meta?.setDisplayName(displayName)
+        item.itemMeta = meta
+        // Only give class item if player doesn't have one yet
+        if (!player.inventory.containsAtLeast(item, 1)) {
+            player.inventory.addItem(item)
+        }
+    }
+
+    @Subcommand("messages")
+    @Description("Sets whether or not you receive messages when a perk or weakness activates")
+    @Syntax("<yesno>")
+    fun commandMessages(player: Player, yesno: Boolean) {
+        plugin.getPlayerData(player.uniqueId).showPerkMessages = yesno
+        if (yesno) {
+            player.sendMessage("[NexusClasses] You will now receive perk/weakness messages")
+        }
+        else {
+            player.sendMessage("[NexusClasses] You will no longer receive perk/weakness messages")
         }
     }
 }

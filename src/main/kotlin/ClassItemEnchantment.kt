@@ -6,16 +6,16 @@ import org.bukkit.enchantments.EnchantmentTarget
 import org.bukkit.inventory.ItemStack
 
 /**
- * A fake enchantment applied to the free pearl owned by Artists to prevent it from stacking.
+ * A fake enchantment applied to class items to mark them as such (and make them shiny)
  */
-class FreePearlEnchantment(i: NamespacedKey) : Enchantment(i) {
-    override fun getName(): String = "Artist Free Pearl"
+class ClassItemEnchantment(key: NamespacedKey) : Enchantment(key) {
+    override fun getName(): String = "Nexus Class Item"
 
     override fun getMaxLevel(): Int = 1
 
     override fun getStartLevel(): Int = 1
 
-    override fun getItemTarget(): EnchantmentTarget = EnchantmentTarget.FISHING_ROD // dummy target cause it can't be null
+    override fun getItemTarget(): EnchantmentTarget = EnchantmentTarget.FISHING_ROD // dummy target
 
     override fun isTreasure(): Boolean = false
 

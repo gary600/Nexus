@@ -3,6 +3,7 @@ package xyz.gary600.nexusclasses
 import co.aikar.commands.BukkitCommandManager
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import kotlin.collections.HashMap
@@ -29,24 +30,35 @@ class NexusClasses : JavaPlugin() {
         }
     }
 
+    // Helper function to send a perk message if the player wants it
+    fun sendPerkMessage(player: Player, message: String) {
+        if (getPlayerData(player.uniqueId).showPerkMessages) {
+            player.sendMessage(message)
+        }
+    }
+
     override fun onEnable() {
-        // ACF command manager
-        val commandManager = BukkitCommandManager(this)
-
-        // Register command
-        commandManager.registerCommand(ClassCommand(this))
-
-        // Register pearl enchantment
+        // Register class item enchantment
         // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
         val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")
         acceptingNewField.trySetAccessible()
         acceptingNewField.set(null, true)
         // Actually register
-        val enchantKey = NamespacedKey(this, "free_pearl")
-        val enchant = FreePearlEnchantment(enchantKey)
+        val enchantKey = NamespacedKey(this, "classitem")
+        val enchant = ClassItemEnchantment(enchantKey)
         Enchantment.registerEnchantment(enchant)
 
+        // ACF command manager
+        val commandManager = BukkitCommandManager(this)
+
+        // Register command
+        commandManager.registerCommand(ClassCommand(this, enchant))
+
         // Register event handler
-        server.pluginManager.registerEvents(Listeners(this, enchant), this)
+        server.pluginManager.registerEvents(ClassesListener(this, enchant), this)
+
+        // Start tasks
+        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10) // Apply damage every 10 ticks
+
     }
 }
