@@ -71,16 +71,15 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
         }
     }
 
-    @Subcommand("messages")
-    @Description("Sets whether or not you receive messages when a perk or weakness activates")
-    @Syntax("<yesno>")
+    @Subcommand("debug_messages")
+    @Private
     fun commandMessages(player: Player, yesno: Boolean) {
-        plugin.getPlayerData(player.uniqueId).showPerkMessages = yesno
+        plugin.getPlayerData(player.uniqueId).debugMessages = yesno
         if (yesno) {
-            player.sendMessage("[NexusClasses] You will now receive perk/weakness messages")
+            player.sendMessage("[NexusClasses] You will now receive debug messages")
         }
         else {
-            player.sendMessage("[NexusClasses] You will no longer receive perk/weakness messages")
+            player.sendMessage("[NexusClasses] You will no longer receive debug messages")
         }
     }
 }

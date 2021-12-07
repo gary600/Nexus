@@ -30,9 +30,9 @@ class NexusClasses : JavaPlugin() {
         }
     }
 
-    // Helper function to send a perk message if the player wants it
-    fun sendPerkMessage(player: Player, message: String) {
-        if (getPlayerData(player.uniqueId).showPerkMessages) {
+    // Helper function for debug messages
+    fun sendDebugMessage(player: Player, message: String) {
+        if (getPlayerData(player.uniqueId).debugMessages) {
             player.sendMessage(message)
         }
     }
@@ -58,8 +58,9 @@ class NexusClasses : JavaPlugin() {
         server.pluginManager.registerEvents(ClassesListener(this, enchant), this)
 
         // Start tasks
-        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20) // Every 20 ticks
-        MinerNightVisionTask(this).runTaskTimer(this, 0, 10) // Every 10 ticks
-        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10) // Apply damage every 10 ticks
+        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20)
+        MinerNightVisionTask(this).runTaskTimer(this, 0, 10)
+        WarriorIronAllergyTask(this).runTaskTimer(this, 0, 10)
+        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10)
     }
 }

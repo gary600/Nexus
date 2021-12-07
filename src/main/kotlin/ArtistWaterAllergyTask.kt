@@ -10,7 +10,7 @@ class ArtistWaterAllergyTask(private val plugin: NexusClasses) : BukkitRunnable(
             && p.isInWater
         }.forEach { p ->
             p.damage(1.0) // Half-heart
-            plugin.sendPerkMessage(p, "[NexusClasses] Artist weakness: allergic to water!")
+            plugin.sendDebugMessage(p, "[NexusClasses] Artist weakness: allergic to water!")
         }
     }
 }

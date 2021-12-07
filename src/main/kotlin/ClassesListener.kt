@@ -33,14 +33,14 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
-            plugin.sendPerkMessage(entity, "[NexusClasses] Builder perk: Fall damage cancelled!")
+            plugin.sendDebugMessage(entity, "[NexusClasses] Builder perk: Fall damage cancelled!")
         }
     }
 
     // Builder Perk: Transmute blocks [DONE w/ changes]
     @EventHandler
     fun builderTransmute(event: PlayerInteractEvent) {
-        // Only trigger when block right-clicked with a stick in the primary hand
+        // Only trigger when block right-clicked with a class-item stick in the primary hand
         if (
             event.action == Action.RIGHT_CLICK_BLOCK
             && event.hand == EquipmentSlot.HAND
@@ -52,18 +52,16 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
                 var transmuted = true
                 val block = event.clickedBlock!! // cannot be null because of action type
                 block.type = when (block.type) {
-                    // Cycle 1: cobble -> stone -> stone brick -> obsidian
+                    // Series 1: cobble -> stone -> stone brick -> obsidian
                     Material.COBBLESTONE -> Material.STONE
                     Material.STONE -> Material.STONE_BRICKS
                     Material.STONE_BRICKS -> Material.OBSIDIAN
-                    Material.OBSIDIAN -> Material.COBBLESTONE
 
-                    // Cycle 2: deepslate -> tuff -> nether brick -> blackstone (change: remove obsidian from loop, that'd cause a conflict)
-                    //TODO: add cobbled deepslate for parity with the other cycle?
+                    // Series 2: deepslate -> tuff -> nether brick -> blackstone -> obsidian
                     Material.DEEPSLATE -> Material.TUFF
                     Material.TUFF -> Material.NETHER_BRICKS
                     Material.NETHER_BRICKS -> Material.BLACKSTONE
-                    Material.BLACKSTONE -> Material.DEEPSLATE
+                    Material.BLACKSTONE -> Material.OBSIDIAN
 
                     // Otherwise keep it the same
                     else -> {
@@ -85,7 +83,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
                         1.0f
                     ) // Play block break sound
 
-                    plugin.sendPerkMessage(event.player, "[NexusClasses] Builder perk: Block transmuted!")
+                    plugin.sendDebugMessage(event.player, "[NexusClasses] Builder perk: Block transmuted!")
                 }
             }
             // If not builder, delete item
@@ -107,7 +105,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            plugin.sendPerkMessage(event.player, "[NexusClasses] Miner perk: Free emerald!")
+            plugin.sendDebugMessage(event.player, "[NexusClasses] Miner perk: Free emerald!")
         }
     }
 
@@ -121,7 +119,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             && event.damager is Zombie
         ) {
             event.damage *= 2 // Double damage
-            plugin.sendPerkMessage(entity, "[NexusClasses] Miner weakness: double damage from zombies!")
+            plugin.sendDebugMessage(entity, "[NexusClasses] Miner weakness: double damage from zombies!")
         }
     }
 
@@ -134,20 +132,16 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             && plugin.getPlayerData(damager.uniqueId).nexusClass == NexusClass.Warrior
             && damager.inventory.getItem(damager.inventory.heldItemSlot)?.type in arrayOf(
                 Material.GOLDEN_SWORD,
-                Material.GOLDEN_AXE,
-                Material.GOLDEN_PICKAXE,
-                Material.GOLDEN_SHOVEL,
-                Material.GOLDEN_HOE
+                Material.GOLDEN_AXE
             )
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
             event.damage += 6 // equivalent to Strength II
-            plugin.sendPerkMessage(damager, "[NexusClasses] Warrior perk: Enemy ignited!")
+            plugin.sendDebugMessage(damager, "[NexusClasses] Warrior perk: Enemy ignited!")
         }
     }
 
-    // Warrior perk: Wearing gold armor gives fire immunity [DONE w/ changes]
-    //TODO actually check armor lol
+    // Warrior perk: Wearing gold armor gives fire immunity
     @EventHandler
     fun warriorFireResist(event: EntityDamageEvent) {
         val entity = event.entity
@@ -155,13 +149,19 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             entity is Player
             && plugin.getPlayerData(entity.uniqueId).nexusClass == NexusClass.Warrior
             && (
+                entity.equipment?.helmet?.type == Material.GOLDEN_HELMET
+                || entity.equipment?.chestplate?.type == Material.GOLDEN_CHESTPLATE
+                || entity.equipment?.leggings?.type == Material.GOLDEN_LEGGINGS
+                || entity.equipment?.boots?.type == Material.GOLDEN_BOOTS
+            )
+            && (
                 event.cause == EntityDamageEvent.DamageCause.FIRE
                 || event.cause == EntityDamageEvent.DamageCause.FIRE_TICK
-                || event.cause == EntityDamageEvent.DamageCause.LAVA // Change: add lava
+                || event.cause == EntityDamageEvent.DamageCause.LAVA
             )
         ) {
             event.isCancelled = true
-            plugin.sendPerkMessage(entity, "[NexusClasses] Warrior perk: Fire resistance!") // very spammy
+            plugin.sendDebugMessage(entity, "[NexusClasses] Warrior perk: Fire resistance!") // very spammy
         }
     }
 
@@ -183,7 +183,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             ) {
                 if (plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Artist) {
                     classItem.amount = 2
-                    plugin.sendPerkMessage(event.player, "[NexusClasses] Artist perk: free end pearl!")
+                    plugin.sendDebugMessage(event.player, "[NexusClasses] Artist perk: free end pearl!")
                 }
                 // Don't let non-Artists use the pearl
                 else {

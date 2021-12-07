@@ -12,7 +12,7 @@ class BuilderSunlightWeaknessTask(private val plugin: NexusClasses) : BukkitRunn
             && (p.world.time >= 23460 || p.world.time <= 12535) // same time as zombies
         }.forEach { p ->
             p.fireTicks = 40
-            plugin.sendPerkMessage(p, "[NexusClasses] Builder weakness: burning in sunlight")
+            plugin.sendDebugMessage(p, "[NexusClasses] Builder weakness: burning in sunlight")
         }
     }
 }
