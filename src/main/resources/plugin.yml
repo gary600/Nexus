@@ -1,0 +1,29 @@
+name: NexusClasses
+version: 0.1.0
+author: gary600
+main: xyz.gary600.nexusclasses.NexusClasses
+api-version: 1.17 # Use latest API
+
+permissions:
+  nexusclasses.choose:
+    description: Allows choosing one's own class
+    default: true
+
+  nexusclasses.set:
+    description: Allows setting other players' classes
+    default: op
+
+  nexusclasses.*:
+    description: Wildcard permission
+    default: op
+    children:
+      - nexusclasses.choose
+      - nexusclasses.set
+
+commands:
+  nexusclass:
+    description: foo
+    aliases:
+      - nexusclasses
+      - class
+    usage: /nexusclass choose|get|set
