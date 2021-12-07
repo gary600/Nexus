@@ -47,6 +47,6 @@ class NexusClasses : JavaPlugin() {
         Enchantment.registerEnchantment(enchant)
 
         // Register event handler
-        server.pluginManager.registerEvents(ClassListener(this, enchant), this)
+        server.pluginManager.registerEvents(Listeners(this, enchant), this)
     }
 }

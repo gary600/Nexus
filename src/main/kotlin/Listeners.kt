@@ -4,6 +4,8 @@ package xyz.gary600.nexusclasses
 
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
@@ -16,7 +18,11 @@ import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
-class ClassListener(private val plugin: NexusClasses, private val freePearlEnchantment: FreePearlEnchantment) : Listener {
+/**
+ * The event listeners used by NexusClasses
+ */
+//TODO: Check for class in each listener
+class Listeners(private val plugin: NexusClasses, private val freePearlEnchantment: FreePearlEnchantment) : Listener {
     // Builder Perk: Inhibit fall damage [DONE]
     @EventHandler
     fun builderNoFallDamage(event: EntityDamageEvent) {
@@ -27,20 +33,25 @@ class ClassListener(private val plugin: NexusClasses, private val freePearlEncha
     }
 
     // Builder Perk: Transmute blocks [DONE w/ changes]
-    //TODO: only when holding a stick
     @EventHandler
     fun builderTransmute(event: PlayerInteractEvent) {
-        // Only trigger when block right-clicked with primary hand
-        if (event.action == Action.RIGHT_CLICK_BLOCK && event.hand == EquipmentSlot.HAND) {
+        // Only trigger when block right-clicked with a stick in the primary hand
+        if (
+            event.action == Action.RIGHT_CLICK_BLOCK
+            && event.hand == EquipmentSlot.HAND
+            && event.player.inventory.getItem(event.player.inventory.heldItemSlot)?.type == Material.STICK // Change: only when holding a stick
+        ) {
             var transmuted = true
-            event.clickedBlock!!.type = when (event.clickedBlock!!.type) { // cannot be null because of action type
+            val block = event.clickedBlock!! // cannot be null because of action type
+            block.type = when (block.type) {
                 // Cycle 1: cobble -> stone -> stone brick -> obsidian
                 Material.COBBLESTONE -> Material.STONE
                 Material.STONE -> Material.STONE_BRICKS
                 Material.STONE_BRICKS -> Material.OBSIDIAN
                 Material.OBSIDIAN -> Material.COBBLESTONE
 
-                // Cycle 2: deepslate -> tuff -> nether brick -> blackstone -> obsidian???? [talk to Sarah]
+                // Cycle 2: deepslate -> tuff -> nether brick -> blackstone (change: remove obsidian from loop, that'd cause a conflict)
+                //TODO: add cobbled deepslate for parity with the other cycle?
                 Material.DEEPSLATE -> Material.TUFF
                 Material.TUFF -> Material.NETHER_BRICKS
                 Material.NETHER_BRICKS -> Material.BLACKSTONE
@@ -49,10 +60,13 @@ class ClassListener(private val plugin: NexusClasses, private val freePearlEncha
                 // Otherwise keep it the same
                 else -> {
                     transmuted = false
-                    event.clickedBlock!!.type
+                    block.type
                 }
             }
             if (transmuted) {
+                block.world.spawnParticle(Particle.BLOCK_DUST, block.location.add(0.5, 0.5, 0.5), 32, block.blockData) // Spawn particles at center of block
+                block.world.playSound(block.location, block.blockData.soundGroup.breakSound, 1.0f, 1.0f) // Play block break sound
+
                 event.player.sendMessage("[NexusClasses] Builder perk: Block transmuted!")
             }
         }
