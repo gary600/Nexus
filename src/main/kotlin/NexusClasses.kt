@@ -59,6 +59,6 @@ class NexusClasses : JavaPlugin() {
 
         // Start tasks
         ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10) // Apply damage every 10 ticks
-
+        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20) // Every 20 ticks
     }
 }

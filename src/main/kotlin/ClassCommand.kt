@@ -17,7 +17,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
     @CommandPermission("nexusclasses.choose")
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         plugin.getPlayerData(player.uniqueId).nexusClass = nexusClass
-        player.sendMessage("[NexusClasses] Set class to ${nexusClass.name}")
+        player.sendMessage("[NexusClasses] Your class is now ${nexusClass.name}")
     }
 
     @Subcommand("set")
@@ -51,7 +51,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
     fun commandItem(player: Player) {
         when (val nexusClass = plugin.getPlayerData(player.uniqueId).nexusClass) {
             NexusClass.Builder -> giveClassItem(player, Material.STICK, "[Builder] Transmute")
-            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "[Artist] Planar Blink]")
+            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "[Artist] Planar Blink")
             else -> {
                 player.sendMessage("[NexusClasses] Class $nexusClass doesn't have a class item")
             }

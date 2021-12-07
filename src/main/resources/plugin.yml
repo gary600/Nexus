@@ -26,4 +26,4 @@ commands:
     aliases:
       - nexusclasses
       - class
-    usage: /nexusclass choose|get|set
+    usage: /nexusclass choose|get|set|item|messages
