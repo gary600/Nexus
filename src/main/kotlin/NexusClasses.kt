@@ -75,15 +75,20 @@ class NexusClasses : JavaPlugin() {
                 continue
             }
         }
-        logger.info("[NexusClasses] Loaded playerdata for ${playerData.size} players")
+        logger.info("Loaded playerdata for ${playerData.size} players")
 
-        // Register class item enchantment
-        // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
-        val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")
-        acceptingNewField.trySetAccessible()
-        acceptingNewField.set(null, true) // writing to a private field!!!
-        // Actually register enchant
-        Enchantment.registerEnchantment(classItemEnchantment)
+        try {
+            // Register class item enchantment
+            // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
+            val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")
+            acceptingNewField.trySetAccessible()
+            acceptingNewField.set(null, true) // writing to a private field!!!
+            // Actually register enchant
+            Enchantment.registerEnchantment(classItemEnchantment)
+        }
+        catch (x: IllegalArgumentException) {
+            logger.warning("Reload detected! Not re-registering enchantment, avoid using /reload")
+        }
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)
