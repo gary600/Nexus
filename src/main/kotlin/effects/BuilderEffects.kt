@@ -27,7 +27,7 @@ class BuilderEffects : Listener {
     fun register() {
         Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
         Bukkit.getScheduler().let {
-            it.runTaskTimer(NexusClasses.instance!!, this::helmetDegradeTask, 0, 20) // Once per second
+            it.runTaskTimer(NexusClasses.instance!!, this::burnInSunTask, 0, 20) // Once per second
             it.runTaskTimer(NexusClasses.instance!!, this::helmetDegradeTask, 0, 1200) // Once per minute
         }
     }
@@ -59,9 +59,8 @@ class BuilderEffects : Listener {
         ) {
             // Transmute if builder
             if (event.player.nexusClass == NexusClass.Builder) {
-                var transmuted = true
                 val block = event.clickedBlock!! // cannot be null because of action type
-                block.type = when (block.type) {
+                val newType = when (block.type) {
                     // Series 1: cobble -> stone -> stone brick -> obsidian
                     Material.COBBLESTONE -> Material.STONE
                     Material.STONE -> Material.STONE_BRICKS
@@ -74,12 +73,11 @@ class BuilderEffects : Listener {
                     Material.BLACKSTONE -> Material.OBSIDIAN
 
                     // Otherwise keep it the same
-                    else -> {
-                        transmuted = false
-                        block.type
-                    }
+                    else -> null
                 }
-                if (transmuted) {
+                if (newType != null) {
+                    // Set block type
+                    block.type = newType
                     // Spawn particles at center of block
                     block.world.spawnParticle(
                         Particle.BLOCK_DUST,
