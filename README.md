@@ -39,3 +39,6 @@ Warrior:
 Artist:
 * free ender pearl at all times (`ClassesListener.artistFreeEndPearl`) [TESTED]
 * take damage in water (`ArtistWaterAllergyTask`) [TESTED]
+
+## License
+This plugin is licensed under the Apache 2.0 license.

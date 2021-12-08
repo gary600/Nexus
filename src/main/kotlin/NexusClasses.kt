@@ -17,6 +17,8 @@ import kotlin.collections.HashMap
 class NexusClasses : JavaPlugin() {
     // The collection of all player data
     private val playerData = HashMap<UUID, PlayerData>()
+    // The list of worlds that classes operate on
+    private val worlds = ArrayList<UUID>()
 
     fun getPlayerData(id: UUID): PlayerData {
         val data = playerData[id]
@@ -57,7 +59,6 @@ class NexusClasses : JavaPlugin() {
         val datalist = config.getMapList("playerData")
         for (data in datalist) {
             try {
-                @Suppress("unchecked_cast") // idk how to fix this unchecked cast, i'm just catching the error
                 val pd = PlayerData.deserialize(data as Map<String, Any>)
                 val uuid = UUID.fromString(data["uuid"] as String)
                 playerData[uuid] = pd
