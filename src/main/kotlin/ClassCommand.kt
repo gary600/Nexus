@@ -71,7 +71,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
         }
     }
 
-    @Subcommand("debug_messages")
+    @Subcommand("debugMessages")
     @Private
     fun commandMessages(player: Player, yesno: Boolean) {
         plugin.getPlayerData(player.uniqueId).debugMessages = yesno

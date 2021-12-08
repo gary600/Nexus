@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import xyz.gary600.nexusclasses.effects.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -58,9 +59,10 @@ class NexusClasses : JavaPlugin() {
         server.pluginManager.registerEvents(ClassesListener(this, enchant), this)
 
         // Start tasks
-        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20)
-        MinerNightVisionTask(this).runTaskTimer(this, 0, 10)
+        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20) // Once per second
+        MinerNightVisionTask(this).runTaskTimer(this, 0, 10) // 2x per second
         WarriorIronAllergyTask(this).runTaskTimer(this, 0, 10)
         ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10)
+        BuilderHelmetDegradeTask(this).runTaskTimer(this, 0, 1200) // Once per minute
     }
 }

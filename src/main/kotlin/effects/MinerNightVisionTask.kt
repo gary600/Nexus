@@ -1,8 +1,10 @@
-package xyz.gary600.nexusclasses
+package xyz.gary600.nexusclasses.effects
 
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
+import xyz.gary600.nexusclasses.NexusClass
+import xyz.gary600.nexusclasses.NexusClasses
 
 class MinerNightVisionTask(private var plugin: NexusClasses) : BukkitRunnable() {
     override fun run() {

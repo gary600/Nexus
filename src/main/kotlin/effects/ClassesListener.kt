@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package xyz.gary600.nexusclasses
+package xyz.gary600.nexusclasses.effects
 
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -18,6 +18,9 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import xyz.gary600.nexusclasses.ClassItemEnchantment
+import xyz.gary600.nexusclasses.NexusClass
+import xyz.gary600.nexusclasses.NexusClasses
 
 /**
  * The event listeners used by NexusClasses
@@ -93,14 +96,21 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         }
     }
 
-    // Builder sun weakness in BuilderSunlightWeaknessTask
-
     // Miner Perk: Certain ores additionally drop emerald
     @EventHandler
     fun minerFreeEmerald(event: BlockBreakEvent) {
         if (
             plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Miner
-            && event.block.type in arrayOf(Material.GOLD_ORE, Material.LAPIS_ORE, Material.REDSTONE_ORE, Material.IRON_ORE)
+            && event.block.type in arrayOf(
+                Material.GOLD_ORE,
+                Material.DEEPSLATE_GOLD_ORE,
+                Material.LAPIS_ORE,
+                Material.DEEPSLATE_LAPIS_ORE,
+                Material.REDSTONE_ORE,
+                Material.DEEPSLATE_REDSTONE_ORE,
+                Material.DIAMOND_ORE,
+                Material.DEEPSLATE_DIAMOND_ORE
+            )
             && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
@@ -118,14 +128,14 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             && plugin.getPlayerData(entity.uniqueId).nexusClass == NexusClass.Miner
             && event.damager is Zombie
         ) {
-            event.damage *= 2 // Double damage
+            event.damage *= 1.2
             plugin.sendDebugMessage(entity, "[NexusClasses] Miner weakness: double damage from zombies!")
         }
     }
 
     // Warrior perk: Automatic fire aspect on golden weapons [DONE]
     @EventHandler
-    fun warriorFireAspect(event: EntityDamageByEntityEvent) {
+    fun warriorGoldWeapons(event: EntityDamageByEntityEvent) {
         val damager = event.damager
         if (
             damager is Player
@@ -164,9 +174,6 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             plugin.sendDebugMessage(entity, "[NexusClasses] Warrior perk: Fire resistance!") // very spammy
         }
     }
-
-    // Warrior weakness: mining fatigue while holding iron weapon, slowness while wearing iron armor
-    //TODO
 
     // Artist perk: free end pearl at all times
     @EventHandler
