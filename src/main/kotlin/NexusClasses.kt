@@ -75,14 +75,14 @@ class NexusClasses : JavaPlugin() {
                 continue
             }
         }
-        println("[NexusClasses] Loaded playerdata for ${playerData.size} players")
+        logger.info("[NexusClasses] Loaded playerdata for ${playerData.size} players")
 
         // Register class item enchantment
         // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
         val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")
         acceptingNewField.trySetAccessible()
-        acceptingNewField.set(null, true)
-        // Actually register
+        acceptingNewField.set(null, true) // writing to a private field!!!
+        // Actually register enchant
         Enchantment.registerEnchantment(classItemEnchantment)
 
         // ACF command manager
@@ -91,18 +91,16 @@ class NexusClasses : JavaPlugin() {
         // Register command
         commandManager.registerCommand(ClassCommand())
 
-        // Register event handler
-        server.pluginManager.registerEvents(ClassesListener(), this)
-
-        // Start tasks
-        BuilderSunlightWeaknessTask().runTaskTimer(this, 0, 20) // Once per second
-        MinerNightVisionTask().runTaskTimer(this, 0, 10) // 2x per second
-        WarriorIronAllergyTask().runTaskTimer(this, 0, 10)
-        ArtistWaterAllergyTask().runTaskTimer(this, 0, 10)
-        BuilderHelmetDegradeTask().runTaskTimer(this, 0, 1200) // Once per minute
+        // Register effects
+        BuilderEffects().register()
+        MinerEffects().register()
+        ArtistEffects().register()
+        WarriorEffects().register()
+        MiscEffects().register()
     }
 
     companion object {
+        // Singleton instance
         var instance: NexusClasses? = null
             private set
     }
