@@ -24,6 +24,7 @@ class ArtistEffects : Listener {
 
     // Perk: free end pearl at all times
     //TODO: prevent giving when clicking a chest/other interactable block
+    //FIXME: Pearls don't deal any damage on the CMURPA server for some reason?
     @EventHandler
     fun freeEndPearl(event: PlayerInteractEvent) {
         if (event.action in arrayOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK)) {
