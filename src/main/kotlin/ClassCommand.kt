@@ -17,6 +17,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
     @CommandPermission("nexusclasses.choose")
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         plugin.getPlayerData(player.uniqueId).nexusClass = nexusClass
+        plugin.savePlayerData()
         player.sendMessage("[NexusClasses] Your class is now ${nexusClass.name}")
     }
 
@@ -26,6 +27,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
     @CommandPermission("nexusclasses.set")
     fun commandSet(sender: CommandSender, nexusClass: NexusClass, player: Player) {
         plugin.getPlayerData(player.uniqueId).nexusClass = nexusClass
+        plugin.savePlayerData()
         sender.sendMessage("[NexusClasses] Your class has been set to ${nexusClass.name}")
         sender.sendMessage("[NexusClasses] Set ${player.displayName}'s class to ${nexusClass.name}")
     }
@@ -75,6 +77,7 @@ class ClassCommand(private val plugin: NexusClasses, private val classItemEnchan
     @Private
     fun commandMessages(player: Player, yesno: Boolean) {
         plugin.getPlayerData(player.uniqueId).debugMessages = yesno
+        plugin.savePlayerData()
         if (yesno) {
             player.sendMessage("[NexusClasses] You will now receive debug messages")
         }

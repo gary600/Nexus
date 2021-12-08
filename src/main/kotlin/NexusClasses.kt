@@ -6,6 +6,8 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexusclasses.effects.*
+import java.lang.ClassCastException
+import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -31,6 +33,18 @@ class NexusClasses : JavaPlugin() {
         }
     }
 
+    fun savePlayerData() {
+        val out = ArrayList<Map<String, Any>>()
+        for ((uuid, pd) in playerData) {
+            val map: MutableMap<String, Any> = pd.serialize().toMutableMap()
+            map["uuid"] = uuid.toString()
+            out.add(map)
+        }
+
+        config.set("playerData", out)
+        saveConfig()
+    }
+
     // Helper function for debug messages
     fun sendDebugMessage(player: Player, message: String) {
         if (getPlayerData(player.uniqueId).debugMessages) {
@@ -39,6 +53,25 @@ class NexusClasses : JavaPlugin() {
     }
 
     override fun onEnable() {
+        // Load config
+        val datalist = config.getMapList("playerData")
+        for (data in datalist) {
+            try {
+                @Suppress("unchecked_cast") // idk how to fix this unchecked cast, i'm just catching the error
+                val pd = PlayerData.deserialize(data as Map<String, Any>)
+                val uuid = UUID.fromString(data["uuid"] as String)
+                playerData[uuid] = pd
+            }
+            // Skip player if it doesn't fit the format
+            catch (x: IllegalArgumentException) {
+                continue
+            }
+            catch (x: ClassCastException) {
+                continue
+            }
+        }
+        println("[NexusClasses] Loaded playerdata for ${playerData.size} players")
+
         // Register class item enchantment
         // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
         val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")

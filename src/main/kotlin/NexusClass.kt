@@ -15,17 +15,20 @@ enum class NexusClass {
     Artist;
 
     companion object {
+        // Parse from text
+        fun parse(str: String?): NexusClass? = when (str?.lowercase()) {
+            "mundane" -> Mundane
+            "builder" -> Builder
+            "miner" -> Miner
+            "warrior" -> Warrior
+            "artist" -> Artist
+            else -> null
+        }
+
         // Parse from text in command
         @Suppress("unused")
         fun getContextResolver(): ContextResolver<NexusClass, BukkitCommandExecutionContext> = ContextResolver { c ->
-            when (c.popFirstArg().lowercase()) {
-                "mundane" -> Mundane
-                "builder" -> Builder
-                "miner" -> Miner
-                "warrior" -> Warrior
-                "artist" -> Artist
-                else -> throw InvalidCommandArgument(MessageKeys.INVALID_SYNTAX)
-            }
+            parse(c.popFirstArg()) ?: throw InvalidCommandArgument(MessageKeys.INVALID_SYNTAX)
         }
     }
 }
