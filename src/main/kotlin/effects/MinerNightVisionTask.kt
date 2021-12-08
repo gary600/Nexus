@@ -1,20 +1,31 @@
 package xyz.gary600.nexusclasses.effects
 
+import org.bukkit.Bukkit
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.NexusClasses
+import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
-class MinerNightVisionTask(private var plugin: NexusClasses) : BukkitRunnable() {
+class MinerNightVisionTask : BukkitRunnable() {
+    // Miner perk: free night vison below y=60
     override fun run() {
-        plugin.server.onlinePlayers.filter { p ->
-            plugin.getPlayerData(p.uniqueId).nexusClass == NexusClass.Miner
-            && p.location.y <= 60.0 // below y=60
-        }.forEach { p ->
-            // Set potion effect for 11 seconds (less than 10 seconds causes a warning flicker
-            p.addPotionEffect(PotionEffect(PotionEffectType.NIGHT_VISION, 220, 0, false, false, false))
-            plugin.sendDebugMessage(p, "[NexusClasses] Miner perk: Free night vision")
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.nexusClass == NexusClass.Miner
+            && player.location.y <= 60.0 // below y=60
+        }.forEach { player ->
+            // Set potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
+            player.addPotionEffect(PotionEffect(
+                PotionEffectType.NIGHT_VISION,
+                220,
+                0,
+                false,
+                false,
+                false
+            ))
+            player.sendDebugMessage("[NexusClasses] Miner perk: Free night vision")
         }
     }
 }

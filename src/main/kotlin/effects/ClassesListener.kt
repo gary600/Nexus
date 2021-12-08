@@ -8,6 +8,7 @@ import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
@@ -18,25 +19,26 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import xyz.gary600.nexusclasses.ClassItemEnchantment
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
+import xyz.gary600.nexusclasses.extension.isClassItem
+import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
 /**
  * The event listeners used by NexusClasses
  */
-class ClassesListener(private val plugin: NexusClasses, private val classItemEnchantment: ClassItemEnchantment) : Listener {
-    // Builder Perk: Inhibit fall damage [DONE]
-    @EventHandler
+class ClassesListener : Listener {
+    // Builder Perk: Inhibit fall damage
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun builderNoFallDamage(event: EntityDamageEvent) {
         val entity = event.entity
         if (
             entity is Player
-            && plugin.getPlayerData(entity.uniqueId).nexusClass == NexusClass.Builder
+            && entity.nexusClass == NexusClass.Builder
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
-            plugin.sendDebugMessage(entity, "[NexusClasses] Builder perk: Fall damage cancelled!")
+            entity.sendDebugMessage("[NexusClasses] Builder perk: Fall damage cancelled!")
         }
     }
 
@@ -47,11 +49,12 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         if (
             event.action == Action.RIGHT_CLICK_BLOCK
             && event.hand == EquipmentSlot.HAND
-            && event.player.inventory.getItem(event.player.inventory.heldItemSlot)?.type == Material.STICK // Change: only when holding a stick
-            && event.player.inventory.getItem(event.player.inventory.heldItemSlot)?.enchantments?.containsKey(classItemEnchantment) == true
+            && event.player.inventory.getItem(event.player.inventory.heldItemSlot).let {
+                it?.type == Material.STICK && it.isClassItem()
+            }
         ) {
             // Transmute if builder
-            if (plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Builder) {
+            if (event.player.nexusClass == NexusClass.Builder) {
                 var transmuted = true
                 val block = event.clickedBlock!! // cannot be null because of action type
                 block.type = when (block.type) {
@@ -73,25 +76,27 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
                     }
                 }
                 if (transmuted) {
+                    // Spawn particles at center of block
                     block.world.spawnParticle(
                         Particle.BLOCK_DUST,
                         block.location.add(0.5, 0.5, 0.5),
                         32,
                         block.blockData
-                    ) // Spawn particles at center of block
+                    )
+                    // Play block break sound
                     block.world.playSound(
                         block.location,
                         block.blockData.soundGroup.breakSound,
                         1.0f,
                         1.0f
-                    ) // Play block break sound
+                    )
 
-                    plugin.sendDebugMessage(event.player, "[NexusClasses] Builder perk: Block transmuted!")
+                    event.player.sendDebugMessage("[NexusClasses] Builder perk: Block transmuted!")
                 }
             }
             // If not builder, delete item
             else {
-                event.player.inventory.getItem(event.player.inventory.heldItemSlot)?.amount = 0
+                event.player.inventory.itemInMainHand.amount = 0
             }
         }
     }
@@ -100,7 +105,8 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
     @EventHandler
     fun minerFreeEmerald(event: BlockBreakEvent) {
         if (
-            plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Miner
+            event.player.nexusClass == NexusClass.Miner
+            && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
             && event.block.type in arrayOf(
                 Material.GOLD_ORE,
                 Material.DEEPSLATE_GOLD_ORE,
@@ -111,11 +117,10 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
                 Material.DIAMOND_ORE,
                 Material.DEEPSLATE_DIAMOND_ORE
             )
-            && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            plugin.sendDebugMessage(event.player, "[NexusClasses] Miner perk: Free emerald!")
+            event.player.sendDebugMessage("[NexusClasses] Miner perk: Free emerald!")
         }
     }
 
@@ -125,11 +130,11 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         val entity = event.entity
         if (
             entity is Player
-            && plugin.getPlayerData(entity.uniqueId).nexusClass == NexusClass.Miner
+            && entity.nexusClass == NexusClass.Miner
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
-            plugin.sendDebugMessage(entity, "[NexusClasses] Miner weakness: double damage from zombies!")
+            entity.sendDebugMessage("[NexusClasses] Miner weakness: double damage from zombies!")
         }
     }
 
@@ -139,15 +144,15 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         val damager = event.damager
         if (
             damager is Player
-            && plugin.getPlayerData(damager.uniqueId).nexusClass == NexusClass.Warrior
-            && damager.inventory.getItem(damager.inventory.heldItemSlot)?.type in arrayOf(
+            && damager.nexusClass == NexusClass.Warrior
+            && damager.inventory.itemInMainHand.type in arrayOf(
                 Material.GOLDEN_SWORD,
                 Material.GOLDEN_AXE
             )
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
             event.damage += 6 // equivalent to Strength II
-            plugin.sendDebugMessage(damager, "[NexusClasses] Warrior perk: Enemy ignited!")
+            damager.sendDebugMessage("[NexusClasses] Warrior perk: Enemy ignited!")
         }
     }
 
@@ -157,40 +162,38 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
         val entity = event.entity
         if (
             entity is Player
-            && plugin.getPlayerData(entity.uniqueId).nexusClass == NexusClass.Warrior
+            && entity.nexusClass == NexusClass.Warrior
             && (
                 entity.equipment?.helmet?.type == Material.GOLDEN_HELMET
                 || entity.equipment?.chestplate?.type == Material.GOLDEN_CHESTPLATE
                 || entity.equipment?.leggings?.type == Material.GOLDEN_LEGGINGS
                 || entity.equipment?.boots?.type == Material.GOLDEN_BOOTS
             )
-            && (
-                event.cause == EntityDamageEvent.DamageCause.FIRE
-                || event.cause == EntityDamageEvent.DamageCause.FIRE_TICK
-                || event.cause == EntityDamageEvent.DamageCause.LAVA
+            && event.cause in arrayOf(
+                EntityDamageEvent.DamageCause.FIRE,
+                EntityDamageEvent.DamageCause.FIRE_TICK,
+                EntityDamageEvent.DamageCause.LAVA
             )
         ) {
             event.isCancelled = true
-            plugin.sendDebugMessage(entity, "[NexusClasses] Warrior perk: Fire resistance!") // very spammy
+            entity.sendDebugMessage("[NexusClasses] Warrior perk: Fire resistance!") // very spammy
         }
     }
 
     // Artist perk: free end pearl at all times
+    //TODO: prevent giving when clicking a chest/other interactable block
     @EventHandler
     fun artistFreeEndPearl(event: PlayerInteractEvent) {
-        if (
-            (event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK)
-            && event.hand == EquipmentSlot.HAND
-        ) {
-            val classItem = event.player.inventory.getItem(event.player.inventory.heldItemSlot)
+        if (event.action in arrayOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK)) {
+            val classItem = event.item
             if (
                 classItem?.type == Material.ENDER_PEARL
-                && classItem.enchantments.containsKey(classItemEnchantment)
+                && classItem.isClassItem()
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
             ) {
-                if (plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Artist) {
+                if (event.player.nexusClass == NexusClass.Artist) {
                     classItem.amount = 2
-                    plugin.sendDebugMessage(event.player, "[NexusClasses] Artist perk: free end pearl!")
+                    event.player.sendDebugMessage("[NexusClasses] Artist perk: free end pearl!")
                 }
                 // Don't let non-Artists use the pearl
                 else {
@@ -206,17 +209,11 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
     fun preventDropClassItem(event: PlayerDropItemEvent) {
-        if (event.itemDrop.itemStack.enchantments.containsKey(classItemEnchantment)) {
+        if (event.itemDrop.itemStack.isClassItem()) {
             // Players of that class can't drop the item
             if (
-                (
-                    plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Artist
-                    && event.itemDrop.itemStack.type == Material.ENDER_PEARL
-                )
-                || (
-                    plugin.getPlayerData(event.player.uniqueId).nexusClass == NexusClass.Builder
-                    && event.itemDrop.itemStack.type == Material.STICK
-                )
+                (event.player.nexusClass == NexusClass.Artist && event.itemDrop.itemStack.type == Material.ENDER_PEARL)
+                || (event.player.nexusClass == NexusClass.Builder && event.itemDrop.itemStack.type == Material.STICK)
             ) {
                 event.isCancelled = true
             }
@@ -234,12 +231,12 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
             (
                 event.click.isShiftClick
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
-                && event.currentItem?.enchantments?.containsKey(classItemEnchantment) == true // item *under* cursor is the class item
+                && event.currentItem?.isClassItem() == true // item *under* cursor is the class item
             )
             // If item moved into other inventory normally
             || (
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
-                && event.cursor?.enchantments?.containsKey(classItemEnchantment) == true // item *on* cursor is the class item
+                && event.cursor?.isClassItem() == true // item *on* cursor is the class item
             )
         ) {
             event.isCancelled = true
@@ -248,7 +245,7 @@ class ClassesListener(private val plugin: NexusClasses, private val classItemEnc
     // Prevent dragging class items
     @EventHandler
     fun preventDragClassItem(event: InventoryDragEvent) {
-        if (event.oldCursor.enchantments.containsKey(classItemEnchantment)) {
+        if (event.oldCursor.isClassItem()) {
             event.isCancelled = true
         }
     }

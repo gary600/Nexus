@@ -3,7 +3,6 @@ package xyz.gary600.nexusclasses
 import co.aikar.commands.BukkitCommandManager
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexusclasses.effects.*
 import java.lang.ClassCastException
@@ -15,10 +14,21 @@ import kotlin.collections.HashMap
  * NexusClasses: custom character class plugin for CMURPGA's Nexus RP
  */
 class NexusClasses : JavaPlugin() {
+    // Class item enchantment
+    val classItemEnchantment: ClassItemEnchantment = ClassItemEnchantment(NamespacedKey(this, "classitem"))
+
     // The collection of all player data
     private val playerData = HashMap<UUID, PlayerData>()
     // The list of worlds that classes operate on
-    private val worlds = ArrayList<UUID>()
+//    private val worlds = ArrayList<UUID>()
+
+    init {
+        if (instance != null) {
+            throw Exception("Only one NexusClasses instance may exist")
+        }
+        // Store singleton instance
+        instance = this
+    }
 
     fun getPlayerData(id: UUID): PlayerData {
         val data = playerData[id]
@@ -47,18 +57,12 @@ class NexusClasses : JavaPlugin() {
         saveConfig()
     }
 
-    // Helper function for debug messages
-    fun sendDebugMessage(player: Player, message: String) {
-        if (getPlayerData(player.uniqueId).debugMessages) {
-            player.sendMessage(message)
-        }
-    }
-
     override fun onEnable() {
         // Load config
         val datalist = config.getMapList("playerData")
         for (data in datalist) {
             try {
+                @Suppress("UNCHECKED_CAST") // More knowledge about Kotlin required
                 val pd = PlayerData.deserialize(data as Map<String, Any>)
                 val uuid = UUID.fromString(data["uuid"] as String)
                 playerData[uuid] = pd
@@ -79,24 +83,27 @@ class NexusClasses : JavaPlugin() {
         acceptingNewField.trySetAccessible()
         acceptingNewField.set(null, true)
         // Actually register
-        val enchantKey = NamespacedKey(this, "classitem")
-        val enchant = ClassItemEnchantment(enchantKey)
-        Enchantment.registerEnchantment(enchant)
+        Enchantment.registerEnchantment(classItemEnchantment)
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)
 
         // Register command
-        commandManager.registerCommand(ClassCommand(this, enchant))
+        commandManager.registerCommand(ClassCommand())
 
         // Register event handler
-        server.pluginManager.registerEvents(ClassesListener(this, enchant), this)
+        server.pluginManager.registerEvents(ClassesListener(), this)
 
         // Start tasks
-        BuilderSunlightWeaknessTask(this).runTaskTimer(this, 0, 20) // Once per second
-        MinerNightVisionTask(this).runTaskTimer(this, 0, 10) // 2x per second
-        WarriorIronAllergyTask(this).runTaskTimer(this, 0, 10)
-        ArtistWaterAllergyTask(this).runTaskTimer(this, 0, 10)
-        BuilderHelmetDegradeTask(this).runTaskTimer(this, 0, 1200) // Once per minute
+        BuilderSunlightWeaknessTask().runTaskTimer(this, 0, 20) // Once per second
+        MinerNightVisionTask().runTaskTimer(this, 0, 10) // 2x per second
+        WarriorIronAllergyTask().runTaskTimer(this, 0, 10)
+        ArtistWaterAllergyTask().runTaskTimer(this, 0, 10)
+        BuilderHelmetDegradeTask().runTaskTimer(this, 0, 1200) // Once per minute
+    }
+
+    companion object {
+        var instance: NexusClasses? = null
+            private set
     }
 }
