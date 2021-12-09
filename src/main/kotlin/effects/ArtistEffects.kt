@@ -31,7 +31,7 @@ class ArtistEffects : Listener {
             val classItem = event.item
             if (
                 classItem?.type == Material.ENDER_PEARL
-                && classItem.isClassItem()
+                && classItem.isClassItem
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
             ) {
                 if (event.player.nexusClass == NexusClass.Artist) {

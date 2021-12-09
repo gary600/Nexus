@@ -2,7 +2,6 @@ package xyz.gary600.nexusclasses
 
 import co.aikar.commands.BukkitCommandManager
 import org.bukkit.NamespacedKey
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexusclasses.effects.*
 import java.lang.ClassCastException
@@ -14,8 +13,7 @@ import kotlin.collections.HashMap
  * NexusClasses: custom character class plugin for CMURPGA's Nexus RP
  */
 class NexusClasses : JavaPlugin() {
-    // Class item enchantment
-    val classItemEnchantment: ClassItemEnchantment = ClassItemEnchantment(NamespacedKey(this, "classitem"))
+    val classItemKey = NamespacedKey(this, "classitem")
 
     // The collection of all player data
     private val playerData = HashMap<UUID, PlayerData>()
@@ -76,19 +74,6 @@ class NexusClasses : JavaPlugin() {
             }
         }
         logger.info("Loaded playerdata for ${playerData.size} players")
-
-        try {
-            // Register class item enchantment
-            // Reflection tomfoolery to force Spigot to allow us to register a new enchant (apparently this is normal????)
-            val acceptingNewField = Enchantment::class.java.getDeclaredField("acceptingNew")
-            acceptingNewField.trySetAccessible()
-            acceptingNewField.set(null, true) // writing to a private field!!!
-            // Actually register enchant
-            Enchantment.registerEnchantment(classItemEnchantment)
-        }
-        catch (x: IllegalArgumentException) {
-            logger.warning("Reload detected! Not re-registering enchantment, avoid using /reload")
-        }
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)

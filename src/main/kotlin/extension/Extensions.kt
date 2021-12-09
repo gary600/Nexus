@@ -1,8 +1,8 @@
 package xyz.gary600.nexusclasses.extension
 
 import org.bukkit.entity.Player
-import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.PlayerData
@@ -16,11 +16,11 @@ val Player.playerData: PlayerData
 
 var Player.nexusClass: NexusClass
     get() = this.playerData.nexusClass
-    set(nexusClass) {this.playerData.nexusClass = nexusClass}
+    set(x) {this.playerData.nexusClass = x}
 
 var Player.debugMessages: Boolean
     get() = this.playerData.debugMessages
-    set(debugMessages) {this.playerData.debugMessages = debugMessages}
+    set(x) {this.playerData.debugMessages = x}
 
 fun Player.sendDebugMessage(msg: String) {
     if (debugMessages) {
@@ -30,5 +30,21 @@ fun Player.sendDebugMessage(msg: String) {
 
 
 // ItemStack
-fun ItemStack.isClassItem() =
-    enchantments.containsKey(NexusClasses.instance?.classItemEnchantment) // returns False before plugin initalized
+var ItemStack.isClassItem: Boolean
+    get() =
+        itemMeta?.persistentDataContainer?.get(
+            NexusClasses.instance!!.classItemKey,
+            PersistentDataType.BYTE
+        ) != 0.toByte()
+    set(x) {
+        val meta = itemMeta
+        meta?.persistentDataContainer?.set(
+            NexusClasses.instance!!.classItemKey,
+            PersistentDataType.BYTE,
+            when (x) { // Boolean.toByte() only exists on native???
+                true -> 1
+                false -> 0
+            }.toByte()
+        )
+        itemMeta = meta
+    }

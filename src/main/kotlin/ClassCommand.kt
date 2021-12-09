@@ -6,9 +6,13 @@ import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import xyz.gary600.nexusclasses.extension.debugMessages
+import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
 
 @CommandAlias("nexusclass|class")
@@ -55,8 +59,8 @@ class ClassCommand : BaseCommand() {
     @Description("Gives the class item if it exists and you don't have it already")
     fun commandItem(player: Player) {
         when (player.nexusClass) {
-            NexusClass.Builder -> giveClassItem(player, Material.STICK, "[Builder] Transmute")
-            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "[Artist] Planar Blink")
+            NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute", "Builder Class Item")
+            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink", "Artist Class Item")
             else -> {
                 player.sendMessage("[NexusClasses] Class ${player.nexusClass} doesn't have a class item")
             }
@@ -64,12 +68,15 @@ class ClassCommand : BaseCommand() {
     }
 
     // Helper function to give an enchanted class item
-    private fun giveClassItem(player: Player, type: Material, displayName: String) {
+    private fun giveClassItem(player: Player, type: Material, displayName: String, lore: String) {
         val item = ItemStack(type, 1)
-        item.addUnsafeEnchantment(NexusClasses.instance!!.classItemEnchantment, 1)
+        item.addUnsafeEnchantment(Enchantment.LOYALTY, 1) // Dummy enchant to add item glow
         val meta = item.itemMeta
         meta?.setDisplayName(displayName)
+        meta?.lore = listOf(lore)
+        meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS) // Hide the enchants (nobody shall know it's really Loyalty...)
         item.itemMeta = meta
+        item.isClassItem = true
         // Only give class item if player doesn't have one yet
         if (!player.inventory.containsAtLeast(item, 1)) {
             player.inventory.addItem(item)

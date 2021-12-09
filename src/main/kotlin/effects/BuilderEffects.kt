@@ -55,7 +55,7 @@ class BuilderEffects : Listener {
             event.action == Action.RIGHT_CLICK_BLOCK
             && event.hand == EquipmentSlot.HAND
             && event.item?.type == Material.STICK
-            && event.item?.isClassItem() == true
+            && event.item?.isClassItem == true
         ) {
             // Transmute if builder
             if (event.player.nexusClass == NexusClass.Builder) {
