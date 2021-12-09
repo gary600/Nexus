@@ -1,9 +1,6 @@
-@file:Suppress("unused")
-
 package xyz.gary600.nexusclasses
 
 import co.aikar.commands.BaseCommand
-import co.aikar.commands.CommandHelp
 import co.aikar.commands.annotation.*
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -16,6 +13,7 @@ import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.sendNexusMessage
 
+@Suppress("unused")
 @CommandAlias("nexusclass|class")
 class ClassCommand : BaseCommand() {
     @Subcommand("choose|select")
