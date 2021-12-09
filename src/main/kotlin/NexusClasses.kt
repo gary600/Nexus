@@ -17,8 +17,8 @@ class NexusClasses : JavaPlugin() {
 
     // The collection of all player data
     private val playerData = HashMap<UUID, PlayerData>()
-    // The list of worlds that classes operate on
-//    private val worlds = ArrayList<UUID>()
+    // The list of worlds that classes effects work in
+    val worlds = HashSet<UUID>()
 
     init {
         if (instance != null) {
@@ -43,22 +43,27 @@ class NexusClasses : JavaPlugin() {
         }
     }
 
-    fun savePlayerData() {
-        val out = ArrayList<Map<String, Any>>()
+    fun saveData() {
+        // Format playerdata
+        val pdOut = ArrayList<Map<String, Any>>()
         for ((uuid, pd) in playerData) {
             val map: MutableMap<String, Any> = pd.serialize().toMutableMap()
             map["uuid"] = uuid.toString()
-            out.add(map)
+            pdOut.add(map)
         }
+        config.set("playerData", pdOut)
 
-        config.set("playerData", out)
+        // Format world list
+        val worldsOut = worlds.map { it.toString() }
+        config.set("worlds", worldsOut)
+
         saveConfig()
     }
 
     override fun onEnable() {
-        // Load config
-        val datalist = config.getMapList("playerData")
-        for (data in datalist) {
+        // Load playerdata
+        val configData = config.getMapList("playerData")
+        for (data in configData) {
             try {
                 @Suppress("UNCHECKED_CAST") // More knowledge about Kotlin required
                 val pd = PlayerData.deserialize(data as Map<String, Any>)
@@ -67,13 +72,27 @@ class NexusClasses : JavaPlugin() {
             }
             // Skip player if it doesn't fit the format
             catch (x: IllegalArgumentException) {
+                logger.warning("Skipping incorrectly formatted player UUID")
                 continue
             }
             catch (x: ClassCastException) {
+                logger.warning("Skipping badly parsed playerdata")
                 continue
             }
         }
         logger.info("Loaded playerdata for ${playerData.size} players")
+
+        // Load worlds
+        val configWorlds = config.getStringList("worlds")
+        for (world in configWorlds) {
+            try {
+                worlds.add(UUID.fromString(world))
+            }
+            catch (x: IllegalArgumentException) {
+                logger.warning("Skipping incorrectly formatted world UUID")
+            }
+        }
+        logger.info("Enabled class effects in ${worlds.size} worlds")
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)

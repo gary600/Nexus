@@ -43,7 +43,7 @@ class BuilderEffects : Listener {
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
-            entity.sendDebugMessage("[NexusClasses] Builder perk: Fall damage cancelled!")
+            entity.sendDebugMessage("Builder perk: Fall damage cancelled!")
         }
     }
 
@@ -88,12 +88,12 @@ class BuilderEffects : Listener {
                     // Play block break sound
                     block.world.playSound(
                         block.location,
-                        block.blockData.soundGroup.breakSound,
+                        Sound.BLOCK_ENCHANTMENT_TABLE_USE,
                         1.0f,
                         1.0f
                     )
 
-                    event.player.sendDebugMessage("[NexusClasses] Builder perk: Block transmuted!")
+                    event.player.sendDebugMessage("Builder perk: Block transmuted!")
                 }
             }
             // If not builder, delete item
@@ -112,7 +112,7 @@ class BuilderEffects : Listener {
                     && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
             player.fireTicks = 40
-            player.sendDebugMessage("[NexusClasses] Builder weakness: burning in sunlight")
+            player.sendDebugMessage("Builder weakness: burning in sunlight")
         }
     }
 
@@ -135,7 +135,7 @@ class BuilderEffects : Listener {
             }
             player.equipment?.helmet?.itemMeta = meta
 
-            player.sendDebugMessage("[NexusClasses] Builder weakness: helmet degrading in sunlight")
+            player.sendDebugMessage("Builder weakness: helmet degrading in sunlight")
         }
     }
 }

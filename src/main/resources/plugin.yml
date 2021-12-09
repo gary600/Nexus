@@ -13,17 +13,21 @@ permissions:
     description: Allows setting other players' classes
     default: op
 
+  nexusclasses.configure:
+    description: Allows changing configuration, such as enabled worlds
+    default: op
+
   nexusclasses.*:
     description: Wildcard permission
     default: op
     children:
       - nexusclasses.choose
       - nexusclasses.set
+      - nexusclasses.configure
 
 commands:
   nexusclass:
     description: foo
     aliases:
-      - nexusclasses
       - class
-    usage: /nexusclass choose|get|set|item
+    usage: /nexusclass choose|get|set|item|world

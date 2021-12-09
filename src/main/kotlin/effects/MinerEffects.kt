@@ -46,7 +46,7 @@ class MinerEffects : Listener {
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            event.player.sendDebugMessage("[NexusClasses] Miner perk: Free emerald!")
+            event.player.sendDebugMessage("Miner perk: Free emerald!")
         }
     }
 
@@ -60,7 +60,7 @@ class MinerEffects : Listener {
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
-            entity.sendDebugMessage("[NexusClasses] Miner weakness: double damage from zombies!")
+            entity.sendDebugMessage("Miner weakness: double damage from zombies!")
         }
     }
 
@@ -81,7 +81,7 @@ class MinerEffects : Listener {
                 false
             )
             )
-            player.sendDebugMessage("[NexusClasses] Miner perk: Free night vision")
+            player.sendDebugMessage("Miner perk: Free night vision")
         }
     }
 }

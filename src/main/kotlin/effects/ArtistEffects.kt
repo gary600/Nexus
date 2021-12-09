@@ -36,7 +36,7 @@ class ArtistEffects : Listener {
             ) {
                 if (event.player.nexusClass == NexusClass.Artist) {
                     classItem.amount = 2
-                    event.player.sendDebugMessage("[NexusClasses] Artist perk: free end pearl!")
+                    event.player.sendDebugMessage("Artist perk: free end pearl!")
                 }
                 // Don't let non-Artists use the pearl
                 else {
@@ -54,7 +54,7 @@ class ArtistEffects : Listener {
                 && player.isInWater
         }.forEach { player ->
             player.damage(1.0) // Half-heart
-            player.sendDebugMessage("[NexusClasses] Artist weakness: allergic to water!")
+            player.sendDebugMessage("Artist weakness: allergic to water!")
         }
     }
 }

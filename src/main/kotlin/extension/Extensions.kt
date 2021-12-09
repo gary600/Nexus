@@ -1,5 +1,6 @@
 package xyz.gary600.nexusclasses.extension
 
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -24,8 +25,13 @@ var Player.debugMessages: Boolean
 
 fun Player.sendDebugMessage(msg: String) {
     if (debugMessages) {
-        sendMessage(msg)
+        sendNexusMessage(msg)
     }
+}
+
+// CommandSender
+fun CommandSender.sendNexusMessage(msg: String) {
+    sendMessage("§6[NexusClasses]§r $msg")
 }
 
 

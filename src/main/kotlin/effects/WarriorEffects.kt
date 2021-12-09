@@ -38,7 +38,7 @@ class WarriorEffects : Listener {
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
             event.damage += 6 // equivalent to Strength II
-            damager.sendDebugMessage("[NexusClasses] Warrior perk: Enemy ignited!")
+            damager.sendDebugMessage("Warrior perk: Enemy ignited!")
         }
     }
 
@@ -63,7 +63,7 @@ class WarriorEffects : Listener {
             )
         ) {
             event.isCancelled = true
-            entity.sendDebugMessage("[NexusClasses] Warrior perk: Fire resistance!") // very spammy
+            entity.sendDebugMessage("Warrior perk: Fire resistance!") // very spammy
         }
     }
 
@@ -85,7 +85,7 @@ class WarriorEffects : Listener {
                 false
             )
             )
-            player.sendDebugMessage("[NexusClasses] Warrior weakness: mining fatigue from iron weapons")
+            player.sendDebugMessage("Warrior weakness: mining fatigue from iron weapons")
         }
 
         // Wearing iron armor gives slowness
@@ -108,7 +108,7 @@ class WarriorEffects : Listener {
                 false
             )
             )
-            player.sendDebugMessage("[NexusClasses] Warrior weakness: slowness from iron armor")
+            player.sendDebugMessage("Warrior weakness: slowness from iron armor")
         }
     }
 }
