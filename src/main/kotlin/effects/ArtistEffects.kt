@@ -1,6 +1,7 @@
 package xyz.gary600.nexusclasses.effects
 
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
@@ -31,6 +32,7 @@ class ArtistEffects : Effects() {
                 classItem?.type == Material.ENDER_PEARL
                 && classItem.isClassItem
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
+                && event.player.gameMode != GameMode.CREATIVE // don't give in creative mode, it's not used up
             ) {
                 if (event.player.nexusClass == NexusClass.Artist) {
                     classItem.amount = 2

@@ -16,7 +16,7 @@ class NexusClasses : JavaPlugin() {
     val classItemKey = NamespacedKey(this, "classitem")
 
     // The collection of all player data
-    private val playerData = HashMap<UUID, PlayerData>()
+    val playerData = HashMap<UUID, PlayerData>()
     // The list of worlds that classes effects work in
     val worlds = HashSet<UUID>()
 
@@ -26,21 +26,6 @@ class NexusClasses : JavaPlugin() {
         }
         // Store singleton instance
         instance = this
-    }
-
-    fun getPlayerData(id: UUID): PlayerData {
-        val data = playerData[id]
-
-        // If there's no data for this player, create it and store it in the map
-        return if (data == null) {
-            val newData = PlayerData()
-            playerData[id] = newData
-            newData
-        }
-        // Otherwise return it
-        else {
-            data
-        }
     }
 
     fun saveData() {
@@ -101,15 +86,16 @@ class NexusClasses : JavaPlugin() {
         commandManager.registerCommand(ClassCommand())
 
         // Register effects
-        BuilderEffects().register(this)
-        MinerEffects().register(this)
-        ArtistEffects().register(this)
-        WarriorEffects().register(this)
-        MiscEffects().register(this)
+        BuilderEffects().register()
+        MinerEffects().register()
+        ArtistEffects().register()
+        WarriorEffects().register()
+        MiscEffects().register()
     }
 
     companion object {
         // Singleton instance
+        // Note: cannot use Kotlin-style singleton because Bukkit's API requires a constructor to exist
         var instance: NexusClasses? = null
             private set
     }

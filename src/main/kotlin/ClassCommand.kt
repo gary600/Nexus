@@ -2,16 +2,14 @@ package xyz.gary600.nexusclasses
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
+import co.aikar.commands.bukkit.contexts.OnlinePlayer
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import xyz.gary600.nexusclasses.extension.debugMessages
-import xyz.gary600.nexusclasses.extension.isClassItem
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.sendNexusMessage
+import xyz.gary600.nexusclasses.extension.*
 
 @Suppress("unused")
 @CommandAlias("nexusclass|class")
@@ -30,17 +28,18 @@ class ClassCommand : BaseCommand() {
     @Description("Set another player's class")
     @Syntax("<class> <player>")
     @CommandPermission("nexusclasses.set")
-    fun commandSet(sender: CommandSender, nexusClass: NexusClass, player: Player) {
-        player.nexusClass = nexusClass
+    fun commandSet(sender: CommandSender, player: OnlinePlayer, nexusClass: NexusClass) {
+        player.player.nexusClass = nexusClass
         NexusClasses.instance!!.saveData()
-        sender.sendNexusMessage("Your class has been set to ${nexusClass.name}")
-        sender.sendNexusMessage("Set ${player.displayName}'s class to ${nexusClass.name}")
+        player.player.sendNexusMessage("Your class has been set to ${nexusClass.name}")
+        sender.sendNexusMessage("Set ${player.player.displayName}'s class to ${nexusClass.name}")
     }
 
+    @Default
     @Subcommand("get")
     @Description("Get a player's class")
     @Syntax("[<player>]")
-    fun commandGet(sender: CommandSender, @Optional player: Player?) {
+    fun commandGet(sender: CommandSender, @Optional player: OnlinePlayer?) {
         if (player == null) {
             if (sender is Player) {
                 sender.sendNexusMessage("Your class is ${sender.nexusClass}")
@@ -50,7 +49,7 @@ class ClassCommand : BaseCommand() {
             }
         }
         else {
-            sender.sendNexusMessage("${player.displayName}'s class is ${player.nexusClass}")
+            sender.sendNexusMessage("${player.player.displayName}'s class is ${player.player.nexusClass}")
         }
     }
 
@@ -67,15 +66,21 @@ class ClassCommand : BaseCommand() {
     }
 
     // Helper function to give an enchanted class item
-    private fun giveClassItem(player: Player, type: Material, displayName: String, lore: String) {
+    private fun giveClassItem(player: Player, type: Material, displayName: String, loreText: String) {
         val item = ItemStack(type, 1)
-        item.addUnsafeEnchantment(Enchantment.LOYALTY, 1) // Dummy enchant to add item glow
-        val meta = item.itemMeta
-        meta?.setDisplayName(displayName)
-        meta?.lore = listOf(lore)
-        meta?.addItemFlags(ItemFlag.HIDE_ENCHANTS) // Hide the enchants (nobody shall know it's really Loyalty...)
-        item.itemMeta = meta
-        item.isClassItem = true
+
+        // Metadata
+        item.itemMeta = item.itemMeta?.apply {
+            // Make it pretty
+            setDisplayName(displayName)
+            lore = listOf(loreText)
+            addEnchant(Enchantment.LOYALTY, 1, true) // Dummy enchant to add item glow
+            addItemFlags(ItemFlag.HIDE_ENCHANTS) // Hide the enchants (nobody shall know it's really Loyalty...)
+
+            // Mark as class item so it works
+            isClassItem = true
+        }
+
         // Only give class item if player doesn't have one yet
         if (!player.inventory.containsAtLeast(item, 1)) {
             player.inventory.addItem(item)
@@ -89,7 +94,7 @@ class ClassCommand : BaseCommand() {
     fun commandWorld(player: Player, @Optional enabled: Boolean?) {
         when (enabled) {
             null -> {
-                if (player.world.uid in NexusClasses.instance!!.worlds) {
+                if (player.world.nexusClassesEnabled) {
                     player.sendNexusMessage("Class effects are enabled in this world")
                 }
                 else {
@@ -97,22 +102,14 @@ class ClassCommand : BaseCommand() {
                 }
             }
             true -> {
-                if (NexusClasses.instance!!.worlds.add(player.world.uid)) {
-                    player.sendNexusMessage("Class effects enabled for this world")
-                    NexusClasses.instance!!.saveData()
-                }
-                else {
-                    player.sendNexusMessage("Class effects are already enabled in this world")
-                }
+                player.world.nexusClassesEnabled = true
+                NexusClasses.instance!!.saveData()
+                player.sendNexusMessage("Class effects enabled for this world")
             }
             false -> {
-                if (NexusClasses.instance!!.worlds.remove(player.world.uid)) {
-                    player.sendMessage("Class effects disabled for this world")
-                    NexusClasses.instance!!.saveData()
-                }
-                else {
-                    player.sendNexusMessage("Class effects are already disabled in this world")
-                }
+                player.world.nexusClassesEnabled = false
+                NexusClasses.instance!!.saveData()
+                player.sendMessage("Class effects disabled for this world")
             }
         }
     }

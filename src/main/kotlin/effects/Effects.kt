@@ -1,5 +1,6 @@
 package xyz.gary600.nexusclasses.effects
 
+import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import xyz.gary600.nexusclasses.NexusClasses
 import kotlin.reflect.KFunction
@@ -10,15 +11,15 @@ import kotlin.reflect.full.findAnnotation
  * The base class of the various Effects classes. Handles registering the event handler and tasks
  */
 abstract class Effects : Listener {
-    fun register(plugin: NexusClasses) {
-        plugin.server.pluginManager.registerEvents(this, plugin)
+    fun register() {
+        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
 
         this::class.declaredMemberFunctions
             .map { it to it.findAnnotation<TimerTask>() }
             .filter { (_, ann) -> ann != null }
             .forEach { (fn, ann) ->
-            plugin.server.scheduler.runTaskTimer(
-                plugin,
+            Bukkit.getServer().scheduler.runTaskTimer(
+                NexusClasses.instance!!,
                 TaskWrapper(this, fn),
                 ann!!.delay,
                 ann.period

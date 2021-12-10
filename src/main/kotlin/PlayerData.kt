@@ -3,7 +3,14 @@ package xyz.gary600.nexusclasses
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 
 class PlayerData : ConfigurationSerializable {
+    /**
+     * This player's class
+     */
     var nexusClass = NexusClass.Mundane
+
+    /**
+     * Whether or not this player has subscribed to debug messages
+     */
     var debugMessages = false
 
     override fun serialize(): Map<String, Any> = mapOf(

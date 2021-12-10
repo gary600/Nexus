@@ -24,11 +24,5 @@ enum class NexusClass {
             "artist" -> Artist
             else -> null
         }
-
-        // Parse from text in command
-        @Suppress("unused")
-        fun getContextResolver(): ContextResolver<NexusClass, BukkitCommandExecutionContext> = ContextResolver { c ->
-            parse(c.popFirstArg()) ?: throw InvalidCommandArgument(MessageKeys.INVALID_SYNTAX)
-        }
     }
 }
