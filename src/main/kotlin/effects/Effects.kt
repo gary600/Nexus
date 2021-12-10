@@ -2,6 +2,7 @@ package xyz.gary600.nexusclasses.effects
 
 import org.bukkit.event.Listener
 import xyz.gary600.nexusclasses.NexusClasses
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
@@ -16,7 +17,19 @@ abstract class Effects : Listener {
             .map { it to it.findAnnotation<TimerTask>() }
             .filter { (_, ann) -> ann != null }
             .forEach { (fn, ann) ->
-            plugin.server.scheduler.runTaskTimer(plugin, { fn.call(this) } as Runnable, ann!!.delay, ann.period)
+            plugin.server.scheduler.runTaskTimer(
+                plugin,
+                TaskWrapper(this, fn),
+                ann!!.delay,
+                ann.period
+            )
+        }
+    }
+
+    // Internal wrapper
+    private class TaskWrapper(private val fx: Effects, private val fn: KFunction<*>) : Runnable {
+        override fun run() {
+            fn.call(fx)
         }
     }
 }

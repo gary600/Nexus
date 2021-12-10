@@ -62,7 +62,7 @@ class WarriorEffects : Effects() {
 
     // Perk: permenant fire resist
     @TimerTask(0, 10)
-    private fun fireResist() {
+    fun fireResist() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
         }.forEach { player ->
@@ -79,7 +79,7 @@ class WarriorEffects : Effects() {
 
     // Weaknesses
     @TimerTask(0, 10)
-    private fun ironAllergy() {
+    fun ironAllergy() {
         // Holding iron weapons give mining fatigue
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior

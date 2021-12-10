@@ -47,7 +47,7 @@ class ArtistEffects : Effects() {
 
     // Weakness: take damage in water
     @TimerTask(0, 10)
-    private fun dissolveInWaterTask() {
+    fun dissolveInWaterTask() {
         Bukkit.getServer().onlinePlayers.filter {
                 player -> player.nexusClass == NexusClass.Artist
                 && player.isInWater
@@ -60,7 +60,7 @@ class ArtistEffects : Effects() {
 
     // Remove players from list after they leave water
     @TimerTask(0, 1)
-    private fun stopDissolvingTask() {
+    fun stopDissolvingTask() {
         // Only retain players if they are online and in water
         dissolvingPlayers.retainAll {
             Bukkit.getServer().getPlayer(it)?.isInWater == true

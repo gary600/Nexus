@@ -100,7 +100,7 @@ class BuilderEffects : Effects() {
 
     // Weakness: burn in sunlight when not wearing a helmet
     @TimerTask(0, 20)
-    private fun burnInSunTask() {
+    fun burnInSunTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
                     && player.location.block.lightFromSky >= 15 // no block above head
@@ -114,7 +114,7 @@ class BuilderEffects : Effects() {
     }
     // Removes players from the burning players list if they stop burning
     @TimerTask(0, 1)
-    private fun stopBurningTask() {
+    fun stopBurningTask() {
         // Only retain players who are online and have non-zero fire ticks
         burningPlayers.retainAll {
             (Bukkit.getServer().getPlayer(it)?.fireTicks ?: 0) > 0
@@ -131,7 +131,7 @@ class BuilderEffects : Effects() {
 
     // Weakness: helmet degrades in sunlight
     @TimerTask(0, 1200)
-    private fun helmetDegradeTask() {
+    fun helmetDegradeTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
                     && player.location.block.lightFromSky >= 15 // no block above head

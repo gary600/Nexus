@@ -59,7 +59,7 @@ class MinerEffects : Effects() {
 
     // Perk: free night vison below y=60
     @TimerTask(0, 10)
-    private fun nightVisionTask() {
+    fun nightVisionTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Miner
                     && player.location.y <= 60.0 // below y=60
