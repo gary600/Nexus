@@ -1,14 +1,11 @@
 package xyz.gary600.nexusclasses.effects
 
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
 
@@ -16,11 +13,7 @@ import xyz.gary600.nexusclasses.extension.nexusClass
  * Miscellaneous effects
  */
 @Suppress("unused")
-class MiscEffects : Listener {
-    fun register() {
-        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
-    }
-
+class MiscEffects : Effects() {
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
     fun preventDropClassItem(event: PlayerDropItemEvent) {

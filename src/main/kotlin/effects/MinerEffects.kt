@@ -6,14 +6,12 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
@@ -21,12 +19,7 @@ import xyz.gary600.nexusclasses.extension.sendDebugMessage
  * All of the effects of the Miner class
  */
 @Suppress("unused")
-class MinerEffects : Listener {
-    fun register() {
-        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
-        Bukkit.getScheduler().runTaskTimer(NexusClasses.instance!!, this::nightVisionTask, 0, 10)
-    }
-
+class MinerEffects : Effects() {
     // Perk: Certain ores additionally drop emerald
     @EventHandler
     fun freeEmerald(event: BlockBreakEvent) {
@@ -65,6 +58,7 @@ class MinerEffects : Listener {
     }
 
     // Perk: free night vison below y=60
+    @TimerTask(0, 10)
     private fun nightVisionTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Miner

@@ -7,33 +7,27 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.meta.Damageable
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
+import java.util.*
 
 /**
  * All of the effects of the Builder class
  */
 @Suppress("unused")
-class BuilderEffects : Listener {
-    fun register() {
-        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
-        Bukkit.getScheduler().let {
-            it.runTaskTimer(NexusClasses.instance!!, this::burnInSunTask, 0, 20) // Once per second
-            it.runTaskTimer(NexusClasses.instance!!, this::helmetDegradeTask, 0, 1200) // Once per minute
-        }
-    }
+class BuilderEffects : Effects() {
+    // Keeps track of which players are currently burning
+    private val burningPlayers = HashSet<UUID>()
 
     // Perk: Inhibit fall damage
-    //FIXME: not working on CMURPGA server, plugin conflict?
     @EventHandler(priority = EventPriority.HIGHEST)
     fun cancelFallDamage(event: EntityDamageEvent) {
         val entity = event.entity
@@ -43,6 +37,7 @@ class BuilderEffects : Listener {
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
+            event.damage = 0.0 // Cancelling doesn't seem to work on the CMURPGA server
             entity.sendDebugMessage("Builder perk: Fall damage cancelled!")
         }
     }
@@ -104,6 +99,7 @@ class BuilderEffects : Listener {
     }
 
     // Weakness: burn in sunlight when not wearing a helmet
+    @TimerTask(0, 20)
     private fun burnInSunTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
@@ -111,12 +107,30 @@ class BuilderEffects : Listener {
                     && player.equipment?.helmet == null // doesn't have a helmet
                     && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
+            burningPlayers.add(player.uniqueId)
             player.fireTicks = 40
             player.sendDebugMessage("Builder weakness: burning in sunlight")
         }
     }
+    // Removes players from the burning players list if they stop burning
+    @TimerTask(0, 1)
+    private fun stopBurningTask() {
+        // Only retain players who are online and have non-zero fire ticks
+        burningPlayers.retainAll {
+            (Bukkit.getServer().getPlayer(it)?.fireTicks ?: 0) > 0
+        }
+    }
+    // Custom death message for burning to death in the sun
+    @EventHandler
+    fun burnDeathMessage(event: PlayerDeathEvent) {
+        if (event.entity.uniqueId in burningPlayers) {
+            event.deathMessage = "${event.entity.name} forgot their hard hat"
+            burningPlayers.remove(event.entity.uniqueId) // remove from burning players
+        }
+    }
 
     // Weakness: helmet degrades in sunlight
+    @TimerTask(0, 1200)
     private fun helmetDegradeTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder

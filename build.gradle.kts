@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0") // Kotlin stdlib (need to include in jar)
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0") // Kotlin reflection
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT") // Spigot API (don't include in output)
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT") // ACF Command framework
 }

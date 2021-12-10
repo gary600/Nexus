@@ -101,11 +101,11 @@ class NexusClasses : JavaPlugin() {
         commandManager.registerCommand(ClassCommand())
 
         // Register effects
-        BuilderEffects().register()
-        MinerEffects().register()
-        ArtistEffects().register()
-        WarriorEffects().register()
-        MiscEffects().register()
+        BuilderEffects().register(this)
+        MinerEffects().register(this)
+        ArtistEffects().register(this)
+        WarriorEffects().register(this)
+        MiscEffects().register(this)
     }
 
     companion object {

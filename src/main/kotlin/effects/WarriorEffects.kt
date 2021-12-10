@@ -4,13 +4,10 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
@@ -18,15 +15,37 @@ import xyz.gary600.nexusclasses.extension.sendDebugMessage
  * All of the effects of the Warrior class
  */
 @Suppress("unused")
-class WarriorEffects : Listener {
-    fun register() {
-        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
-        Bukkit.getScheduler().runTaskTimer(NexusClasses.instance!!, this::ironAllergy, 0, 10)
+class WarriorEffects : Effects() {
+    // Perk: Automatic fire aspect on melee weapons
+    @EventHandler
+    fun meleeFireAspect(event: EntityDamageByEntityEvent) {
+        val damager = event.damager
+        if (
+            damager is Player
+            && damager.nexusClass == NexusClass.Warrior
+            && damager.inventory.itemInMainHand.type in arrayOf(
+                Material.WOODEN_SWORD,
+                Material.STONE_SWORD,
+                Material.IRON_SWORD,
+                Material.GOLDEN_SWORD,
+                Material.DIAMOND_SWORD,
+                Material.NETHERITE_SWORD,
+                Material.WOODEN_AXE,
+                Material.STONE_AXE,
+                Material.IRON_AXE,
+                Material.GOLDEN_AXE,
+                Material.DIAMOND_AXE,
+                Material.NETHERITE_AXE
+            )
+        ) {
+            event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
+            damager.sendDebugMessage("Warrior perk: Enemy ignited!")
+        }
     }
 
-    // Perk: Automatic fire aspect on golden weapons
+    // Perk: Attacks with golden weapons are equivalent to having Strength II
     @EventHandler
-    fun goldWeaponsBuff(event: EntityDamageByEntityEvent) {
+    fun goldenStrength(event: EntityDamageByEntityEvent) {
         val damager = event.damager
         if (
             damager is Player
@@ -36,38 +55,30 @@ class WarriorEffects : Listener {
                 Material.GOLDEN_AXE
             )
         ) {
-            event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
             event.damage += 6 // equivalent to Strength II
-            damager.sendDebugMessage("Warrior perk: Enemy ignited!")
+            damager.sendDebugMessage("Warrior perk: golden strength")
         }
     }
 
-    // Perk: Wearing gold armor gives fire immunity
-    //FIXME: not working on CMURPGA server, plugin conflict?
-    @EventHandler
-    fun fireResist(event: EntityDamageEvent) {
-        val entity = event.entity
-        if (
-            entity is Player
-            && entity.nexusClass == NexusClass.Warrior
-            && (
-                    entity.equipment?.helmet?.type == Material.GOLDEN_HELMET
-                            || entity.equipment?.chestplate?.type == Material.GOLDEN_CHESTPLATE
-                            || entity.equipment?.leggings?.type == Material.GOLDEN_LEGGINGS
-                            || entity.equipment?.boots?.type == Material.GOLDEN_BOOTS
-                    )
-            && event.cause in arrayOf(
-                EntityDamageEvent.DamageCause.FIRE,
-                EntityDamageEvent.DamageCause.FIRE_TICK,
-                EntityDamageEvent.DamageCause.LAVA
-            )
-        ) {
-            event.isCancelled = true
-            entity.sendDebugMessage("Warrior perk: Fire resistance!") // very spammy
+    // Perk: permenant fire resist
+    @TimerTask(0, 10)
+    private fun fireResist() {
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.nexusClass == NexusClass.Warrior
+        }.forEach { player ->
+            player.addPotionEffect(PotionEffect(
+                PotionEffectType.FIRE_RESISTANCE,
+                20,
+                0,
+                false,
+                false,
+                false
+            ))
         }
     }
 
     // Weaknesses
+    @TimerTask(0, 10)
     private fun ironAllergy() {
         // Holding iron weapons give mining fatigue
         Bukkit.getServer().onlinePlayers.filter { player ->
