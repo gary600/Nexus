@@ -49,42 +49,43 @@ var Player.debugMessages: Boolean
 /**
  * Sends a debug message to the player if they're subscribed to them
  */
-fun Player.sendDebugMessage(msg: String) {
+fun Player.nexusDebugMessage(msg: String) {
     if (debugMessages) {
-        sendNexusMessage(msg)
+        nexusMessage(msg)
     }
 }
 
 /**
  * Sends a NexusClasses-styled message
  */
-fun CommandSender.sendNexusMessage(msg: String) {
+fun CommandSender.nexusMessage(msg: String) {
     sendMessage("§6[NexusClasses]§r $msg")
 }
 
 /**
  * Tracks if this ItemMeta marks a class item
  */
-var ItemMeta.isClassItem: Boolean
+var ItemMeta.itemNexusClass: NexusClass?
     get() =
-        persistentDataContainer.get(
+        persistentDataContainer.get( // Get the class item tag
             NexusClasses.instance!!.classItemKey,
             PersistentDataType.BYTE
-        ) != 0.toByte() // interpret all non-zero values as true
+        )
+            ?.let(NexusClass::fromByte) // Parse it to a NexusClass
     set(x) {
         persistentDataContainer.set(
             NexusClasses.instance!!.classItemKey,
             PersistentDataType.BYTE,
-            when(x) {true -> 1 false -> 0}.toByte() // For some reason, Boolean.toByte() doesn't exist on JVM
+            x?.toByte() ?: 0 // 0 if Mundane
         )
     }
 
 /**
  * Tracks if this ItemStack is a class item
  */
-var ItemStack.isClassItem: Boolean // wrapper around ItemMeta property
-    get() = itemMeta?.isClassItem == true
-    set(x) { itemMeta?.isClassItem = x }
+var ItemStack.itemNexusClass: NexusClass? // wrapper around ItemMeta property
+    get() = itemMeta?.itemNexusClass
+    set(x) { itemMeta?.itemNexusClass = x }
 
 /**
  * Tracks if class effects are enabled in this world

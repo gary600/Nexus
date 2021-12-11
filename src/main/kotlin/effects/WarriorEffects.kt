@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.sendDebugMessage
+import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 
 /**
  * All of the effects of the Warrior class
@@ -41,7 +41,7 @@ class WarriorEffects : Effects() {
             )
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
-            damager.sendDebugMessage("Warrior perk: Enemy ignited!")
+            damager.nexusDebugMessage("Warrior perk: Enemy ignited!")
         }
     }
 
@@ -59,7 +59,7 @@ class WarriorEffects : Effects() {
             )
         ) {
             event.damage += 6 // equivalent to Strength II
-            damager.sendDebugMessage("Warrior perk: golden strength")
+            damager.nexusDebugMessage("Warrior perk: golden strength")
         }
     }
 
@@ -102,7 +102,7 @@ class WarriorEffects : Effects() {
                 false
             )
             )
-            player.sendDebugMessage("Warrior weakness: mining fatigue from iron weapons")
+            player.nexusDebugMessage("Warrior weakness: mining fatigue from iron weapons")
         }
 
         // Wearing iron armor gives slowness
@@ -126,7 +126,7 @@ class WarriorEffects : Effects() {
                 false
             )
             )
-            player.sendDebugMessage("Warrior weakness: slowness from iron armor")
+            player.nexusDebugMessage("Warrior weakness: slowness from iron armor")
         }
     }
 }

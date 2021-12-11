@@ -14,10 +14,10 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.meta.Damageable
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.sendDebugMessage
+import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 import java.util.*
 
 /**
@@ -40,19 +40,19 @@ class BuilderEffects : Effects() {
         ) {
             event.isCancelled = true
             event.damage = 0.0 // Cancelling doesn't seem to work on the CMURPGA server
-            entity.sendDebugMessage("Builder perk: Fall damage cancelled!")
+            entity.nexusDebugMessage("Builder perk: Fall damage cancelled!")
         }
     }
 
     // Perk: Transmute blocks
     @EventHandler
     fun transmute(event: PlayerInteractEvent) {
-        // Only trigger when block right-clicked with a class-item stick
+        // Only trigger when block right-clicked with a Builder class-item stick
         if (
             event.action == Action.RIGHT_CLICK_BLOCK
             && event.hand == EquipmentSlot.HAND
             && event.item?.type == Material.STICK
-            && event.item?.isClassItem == true
+            && event.item?.itemNexusClass == NexusClass.Builder
         ) {
             // Transmute if builder and in enabled world
             if (
@@ -93,7 +93,7 @@ class BuilderEffects : Effects() {
                         1.0f
                     )
 
-                    event.player.sendDebugMessage("Builder perk: Block transmuted!")
+                    event.player.nexusDebugMessage("Builder perk: Block transmuted!")
                 }
             }
             // If not builder or not in enabled world, delete item
@@ -116,7 +116,7 @@ class BuilderEffects : Effects() {
         }.forEach { player ->
             burningPlayers.add(player.uniqueId)
             player.fireTicks = 40
-            player.sendDebugMessage("Builder weakness: burning in sunlight")
+            player.nexusDebugMessage("Builder weakness: burning in sunlight")
         }
     }
     // Removes players from the burning players list if they stop burning
@@ -161,7 +161,7 @@ class BuilderEffects : Effects() {
             }
             player.equipment?.helmet?.itemMeta = meta
 
-            player.sendDebugMessage("Builder weakness: helmet degrading in sunlight")
+            player.nexusDebugMessage("Builder weakness: helmet degrading in sunlight")
         }
     }
 }

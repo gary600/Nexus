@@ -1,37 +1,50 @@
 package xyz.gary600.nexusclasses.effects
 
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerDropItemEvent
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.isClassItem
+import org.bukkit.event.player.PlayerInteractEvent
+import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
+import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 
 /**
- * Miscellaneous effects
+ * Miscellaneous effects to manage class items
  */
 @Suppress("unused")
-class MiscEffects : Effects() {
+class ClassItemEffects : Effects() {
+    // Prevent using a class item belonging to the wrong class or in a world with classes disabled
+    @EventHandler
+    fun preventUseWrongClassItem(event: PlayerInteractEvent) {
+        // If item has a class and it's not the same as the player
+        if (
+            (event.item?.itemNexusClass != null && event.player.nexusClass != event.item!!.itemNexusClass)
+            || !event.player.world.nexusClassesEnabled
+        ) {
+            event.item?.amount = 0 // delete the item
+            event.isCancelled = true // cancel interaction
+            event.player.nexusDebugMessage("Removed class item from wrong class or in wrong world")
+        }
+    }
+
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
     fun preventDropClassItem(event: PlayerDropItemEvent) {
         if (
-            event.itemDrop.itemStack.isClassItem
+            event.itemDrop.itemStack.itemNexusClass != null
             && event.player.world.nexusClassesEnabled
         ) {
             // Players of that class can't drop the item
-            if (
-                (event.player.nexusClass == NexusClass.Artist && event.itemDrop.itemStack.type == Material.ENDER_PEARL)
-                || (event.player.nexusClass == NexusClass.Builder && event.itemDrop.itemStack.type == Material.STICK)
-            ) {
+            if (event.player.nexusClass == event.itemDrop.itemStack.itemNexusClass) {
                 event.isCancelled = true
+                event.player.nexusDebugMessage("Prevented dropping class item")
             }
             // Other classes can drop to delete it
             else {
                 event.itemDrop.remove()
+                event.player.nexusDebugMessage("Removed class item from wrong class")
             }
         }
     }
@@ -43,12 +56,12 @@ class MiscEffects : Effects() {
             ((
                 event.click.isShiftClick
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
-                && event.currentItem?.isClassItem == true // item *under* cursor is the class item
+                && event.currentItem?.itemNexusClass != null // item *under* cursor is the class item
             )
             // If item moved into other inventory normally
             || (
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
-                && event.cursor?.isClassItem == true // item *on* cursor is the class item
+                && event.cursor?.itemNexusClass != null // item *on* cursor is the class item
             ))
             && event.whoClicked.world.nexusClassesEnabled
         ) {
@@ -59,7 +72,7 @@ class MiscEffects : Effects() {
     @EventHandler
     fun preventDragClassItem(event: InventoryDragEvent) {
         if (
-            event.oldCursor.isClassItem
+            event.oldCursor.itemNexusClass != null
             && event.whoClicked.world.nexusClassesEnabled
         ) {
             event.isCancelled = true

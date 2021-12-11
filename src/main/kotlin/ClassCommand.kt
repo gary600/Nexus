@@ -5,11 +5,11 @@ import co.aikar.commands.annotation.*
 import co.aikar.commands.bukkit.contexts.OnlinePlayer
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
-import xyz.gary600.nexusclasses.extension.*
+import xyz.gary600.nexusclasses.extension.debugMessages
+import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
+import xyz.gary600.nexusclasses.extension.nexusMessage
 
 @Suppress("unused")
 @CommandAlias("nexusclass|class")
@@ -21,7 +21,7 @@ class ClassCommand : BaseCommand() {
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         player.nexusClass = nexusClass
         NexusClasses.instance!!.saveData()
-        player.sendNexusMessage("Your class is now ${nexusClass.name}")
+        player.nexusMessage("Your class is now ${nexusClass.name}")
     }
 
     @Subcommand("set")
@@ -31,8 +31,8 @@ class ClassCommand : BaseCommand() {
     fun commandSet(sender: CommandSender, player: OnlinePlayer, nexusClass: NexusClass) {
         player.player.nexusClass = nexusClass
         NexusClasses.instance!!.saveData()
-        player.player.sendNexusMessage("Your class has been set to ${nexusClass.name}")
-        sender.sendNexusMessage("Set ${player.player.displayName}'s class to ${nexusClass.name}")
+        player.player.nexusMessage("Your class has been set to ${nexusClass.name}")
+        sender.nexusMessage("Set ${player.player.displayName}'s class to ${nexusClass.name}")
     }
 
     @Default
@@ -42,14 +42,14 @@ class ClassCommand : BaseCommand() {
     fun commandGet(sender: CommandSender, @Optional player: OnlinePlayer?) {
         if (player == null) {
             if (sender is Player) {
-                sender.sendNexusMessage("Your class is ${sender.nexusClass}")
+                sender.nexusMessage("Your class is ${sender.nexusClass}")
             }
             else {
-                sender.sendNexusMessage("Must supply a player when on console")
+                sender.nexusMessage("Must supply a player when on console")
             }
         }
         else {
-            sender.sendNexusMessage("${player.player.displayName}'s class is ${player.player.nexusClass}")
+            sender.nexusMessage("${player.player.displayName}'s class is ${player.player.nexusClass}")
         }
     }
 
@@ -58,33 +58,21 @@ class ClassCommand : BaseCommand() {
     fun commandItem(player: Player) {
         if (player.world.nexusClassesEnabled) {
             when (player.nexusClass) {
-                NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute", "Builder Class Item")
-                NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink", "Artist Class Item")
+                NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute")
+                NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink")
                 else -> {
-                    player.sendNexusMessage("Class ${player.nexusClass} doesn't have a class item")
+                    player.nexusMessage("Class ${player.nexusClass} doesn't have a class item")
                 }
             }
         }
         else {
-            player.sendNexusMessage("Class items can only be obtained in worlds where NexusClasses is enabled")
+            player.nexusMessage("Class items can only be obtained in worlds where NexusClasses is enabled")
         }
     }
 
     // Helper function to give an enchanted class item
-    private fun giveClassItem(player: Player, type: Material, displayName: String, loreText: String) {
-        val item = ItemStack(type, 1)
-
-        // Metadata
-        item.itemMeta = item.itemMeta?.apply {
-            // Make it pretty
-            setDisplayName(displayName)
-            lore = listOf(loreText)
-            addEnchant(Enchantment.LOYALTY, 1, true) // Dummy enchant to add item glow
-            addItemFlags(ItemFlag.HIDE_ENCHANTS) // Hide the enchants (nobody shall know it's really Loyalty...)
-
-            // Mark as class item so it works
-            isClassItem = true
-        }
+    private fun giveClassItem(player: Player, type: Material, name: String) {
+        val item = player.nexusClass.createClassItem(type, name)
 
         // Only give class item if player doesn't have one yet
         if (!player.inventory.containsAtLeast(item, 1)) {
@@ -100,21 +88,21 @@ class ClassCommand : BaseCommand() {
         when (enabled) {
             null -> {
                 if (player.world.nexusClassesEnabled) {
-                    player.sendNexusMessage("Class effects are enabled in this world")
+                    player.nexusMessage("Class effects are enabled in this world")
                 }
                 else {
-                    player.sendNexusMessage("Class effects are disabled in this world")
+                    player.nexusMessage("Class effects are disabled in this world")
                 }
             }
             true -> {
                 player.world.nexusClassesEnabled = true
                 NexusClasses.instance!!.saveData()
-                player.sendNexusMessage("Class effects enabled for this world")
+                player.nexusMessage("Class effects enabled for this world")
             }
             false -> {
                 player.world.nexusClassesEnabled = false
                 NexusClasses.instance!!.saveData()
-                player.sendMessage("Class effects disabled for this world")
+                player.nexusMessage("Class effects disabled for this world")
             }
         }
     }
@@ -125,10 +113,10 @@ class ClassCommand : BaseCommand() {
         player.debugMessages = yesno
         NexusClasses.instance!!.saveData()
         if (yesno) {
-            player.sendNexusMessage("You will now receive debug messages")
+            player.nexusMessage("You will now receive debug messages")
         }
         else {
-            player.sendNexusMessage("You will no longer receive debug messages")
+            player.nexusMessage("You will no longer receive debug messages")
         }
     }
 }

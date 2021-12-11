@@ -12,12 +12,13 @@ import kotlin.reflect.full.findAnnotation
  */
 abstract class Effects : Listener {
     /**
-     * Register this Effects' event handlers and tasks with the Bukkit scheduler
+     * Register this Effects' event handlers and tasks with Bukkit
      */
     fun register() {
         // Register event handlers normally
         Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance!!)
 
+        // Use reflection to find all annotated functions
         this::class.declaredMemberFunctions // for each declared member function (not static)
             .map { it to it.findAnnotation<TimerTask>() } // get its TimerTask annotation
             .filter { (_, ann) -> ann != null } // skip it if the annotation is not found

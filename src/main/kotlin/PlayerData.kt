@@ -21,7 +21,7 @@ class PlayerData : ConfigurationSerializable {
     companion object {
         fun deserialize(map: Map<String, Any?>): PlayerData {
             val pd = PlayerData()
-            pd.nexusClass = NexusClass.parse(map["nexusClass"] as String?) ?: NexusClass.Mundane
+            pd.nexusClass = NexusClass.fromString(map["nexusClass"] as String?) ?: NexusClass.Mundane
             pd.debugMessages = map["debugMessages"] as Boolean? ?: false
 
             return pd

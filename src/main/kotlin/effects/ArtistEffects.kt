@@ -8,10 +8,10 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.isClassItem
+import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.sendDebugMessage
+import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -33,7 +33,7 @@ class ArtistEffects : Effects() {
             val classItem = event.item
             if (
                 classItem?.type == Material.ENDER_PEARL
-                && classItem.isClassItem
+                && classItem.itemNexusClass == NexusClass.Artist
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
                 && event.player.gameMode != GameMode.CREATIVE // don't give in creative mode, it's not used up
             ) {
@@ -43,7 +43,7 @@ class ArtistEffects : Effects() {
                     && event.player.world.nexusClassesEnabled
                 ) {
                     classItem.amount = 2
-                    event.player.sendDebugMessage("Artist perk: free end pearl!")
+                    event.player.nexusDebugMessage("Artist perk: free end pearl!")
                 }
                 // If not artist or not in world, delete pearl and prevent throwing it
                 else {
@@ -64,7 +64,7 @@ class ArtistEffects : Effects() {
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
             player.damage(1.0) // Half-heart
-            player.sendDebugMessage("Artist weakness: allergic to water!")
+            player.nexusDebugMessage("Artist weakness: allergic to water!")
         }
     }
 

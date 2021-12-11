@@ -90,7 +90,7 @@ class NexusClasses : JavaPlugin() {
         MinerEffects().register()
         ArtistEffects().register()
         WarriorEffects().register()
-        MiscEffects().register()
+        ClassItemEffects().register()
     }
 
     companion object {

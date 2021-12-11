@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.sendDebugMessage
+import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 
 /**
  * All of the effects of the Miner class
@@ -41,7 +41,7 @@ class MinerEffects : Effects() {
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            event.player.sendDebugMessage("Miner perk: Free emerald!")
+            event.player.nexusDebugMessage("Miner perk: Free emerald!")
         }
     }
 
@@ -62,7 +62,7 @@ class MinerEffects : Effects() {
                 false,
                 false
             ))
-            player.sendDebugMessage("Miner perk: Free night vision")
+            player.nexusDebugMessage("Miner perk: Free night vision")
         }
     }
 
@@ -77,7 +77,7 @@ class MinerEffects : Effects() {
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
-            entity.sendDebugMessage("Miner weakness: double damage from zombies!")
+            entity.nexusDebugMessage("Miner weakness: double damage from zombies!")
         }
     }
 }
