@@ -56,12 +56,17 @@ class ClassCommand : BaseCommand() {
     @Subcommand("item")
     @Description("Gives the class item if it exists and you don't have it already")
     fun commandItem(player: Player) {
-        when (player.nexusClass) {
-            NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute", "Builder Class Item")
-            NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink", "Artist Class Item")
-            else -> {
-                player.sendNexusMessage("Class ${player.nexusClass} doesn't have a class item")
+        if (player.world.nexusClassesEnabled) {
+            when (player.nexusClass) {
+                NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute", "Builder Class Item")
+                NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink", "Artist Class Item")
+                else -> {
+                    player.sendNexusMessage("Class ${player.nexusClass} doesn't have a class item")
+                }
             }
+        }
+        else {
+            player.sendNexusMessage("Class items can only be obtained in worlds where NexusClasses is enabled")
         }
     }
 

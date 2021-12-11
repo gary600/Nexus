@@ -9,6 +9,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
 /**
@@ -23,6 +24,7 @@ class WarriorEffects : Effects() {
         if (
             damager is Player
             && damager.nexusClass == NexusClass.Warrior
+            && damager.world.nexusClassesEnabled
             && damager.inventory.itemInMainHand.type in arrayOf(
                 Material.WOODEN_SWORD,
                 Material.STONE_SWORD,
@@ -50,6 +52,7 @@ class WarriorEffects : Effects() {
         if (
             damager is Player
             && damager.nexusClass == NexusClass.Warrior
+            && damager.world.nexusClassesEnabled
             && damager.inventory.itemInMainHand.type in arrayOf(
                 Material.GOLDEN_SWORD,
                 Material.GOLDEN_AXE
@@ -60,11 +63,12 @@ class WarriorEffects : Effects() {
         }
     }
 
-    // Perk: permenant fire resist
+    // Perk: permanent fire resist
     @TimerTask(0, 10)
     fun fireResist() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
+            && player.world.nexusClassesEnabled
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.FIRE_RESISTANCE,
@@ -74,6 +78,7 @@ class WarriorEffects : Effects() {
                 false,
                 false
             ))
+            // No debug message for this cause even I would find that number of messages unbearable
         }
     }
 
@@ -83,7 +88,8 @@ class WarriorEffects : Effects() {
         // Holding iron weapons give mining fatigue
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
-                    && player.inventory.itemInMainHand.type in arrayOf(Material.IRON_SWORD, Material.IRON_AXE)
+            && player.world.nexusClassesEnabled
+            && player.inventory.itemInMainHand.type in arrayOf(Material.IRON_SWORD, Material.IRON_AXE)
         }.forEach { player ->
             // Mining Fatigue 1, last 3 seconds after unequipping item
             player.addPotionEffect(
@@ -102,12 +108,13 @@ class WarriorEffects : Effects() {
         // Wearing iron armor gives slowness
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
-                    && (
-                    player.equipment?.helmet?.type == Material.IRON_HELMET
-                            || player.equipment?.chestplate?.type == Material.IRON_CHESTPLATE
-                            || player.equipment?.leggings?.type == Material.IRON_LEGGINGS
-                            || player.equipment?.boots?.type == Material.IRON_BOOTS
-                    )
+            && player.world.nexusClassesEnabled
+            && (
+                player.equipment?.helmet?.type == Material.IRON_HELMET
+                || player.equipment?.chestplate?.type == Material.IRON_CHESTPLATE
+                || player.equipment?.leggings?.type == Material.IRON_LEGGINGS
+                || player.equipment?.boots?.type == Material.IRON_BOOTS
+            )
         }.forEach { player ->
             player.addPotionEffect(
                 PotionEffect(

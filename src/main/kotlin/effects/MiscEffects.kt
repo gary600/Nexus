@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 
 /**
  * Miscellaneous effects
@@ -17,7 +18,10 @@ class MiscEffects : Effects() {
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
     fun preventDropClassItem(event: PlayerDropItemEvent) {
-        if (event.itemDrop.itemStack.isClassItem) {
+        if (
+            event.itemDrop.itemStack.isClassItem
+            && event.player.world.nexusClassesEnabled
+        ) {
             // Players of that class can't drop the item
             if (
                 (event.player.nexusClass == NexusClass.Artist && event.itemDrop.itemStack.type == Material.ENDER_PEARL)
@@ -36,7 +40,7 @@ class MiscEffects : Effects() {
     fun preventMoveClassItem(event: InventoryClickEvent) {
         if (
             // If shift clicked from player's inventory
-            (
+            ((
                 event.click.isShiftClick
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
                 && event.currentItem?.isClassItem == true // item *under* cursor is the class item
@@ -45,7 +49,8 @@ class MiscEffects : Effects() {
             || (
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
                 && event.cursor?.isClassItem == true // item *on* cursor is the class item
-            )
+            ))
+            && event.whoClicked.world.nexusClassesEnabled
         ) {
             event.isCancelled = true
         }
@@ -53,7 +58,10 @@ class MiscEffects : Effects() {
     // Prevent dragging class items
     @EventHandler
     fun preventDragClassItem(event: InventoryDragEvent) {
-        if (event.oldCursor.isClassItem) {
+        if (
+            event.oldCursor.isClassItem
+            && event.whoClicked.world.nexusClassesEnabled
+        ) {
             event.isCancelled = true
         }
     }

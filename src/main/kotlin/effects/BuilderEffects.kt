@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.Damageable
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 import java.util.*
 
@@ -34,6 +35,7 @@ class BuilderEffects : Effects() {
         if (
             entity is Player
             && entity.nexusClass == NexusClass.Builder
+            && entity.world.nexusClassesEnabled
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
@@ -52,8 +54,11 @@ class BuilderEffects : Effects() {
             && event.item?.type == Material.STICK
             && event.item?.isClassItem == true
         ) {
-            // Transmute if builder
-            if (event.player.nexusClass == NexusClass.Builder) {
+            // Transmute if builder and in enabled world
+            if (
+                event.player.nexusClass == NexusClass.Builder
+                && event.player.world.nexusClassesEnabled
+            ) {
                 val block = event.clickedBlock!! // cannot be null because of action type
                 val newType = when (block.type) {
                     // Series 1: cobble -> stone -> stone brick -> obsidian
@@ -91,7 +96,7 @@ class BuilderEffects : Effects() {
                     event.player.sendDebugMessage("Builder perk: Block transmuted!")
                 }
             }
-            // If not builder, delete item
+            // If not builder or not in enabled world, delete item
             else {
                 event.player.inventory.itemInMainHand.amount = 0
             }
@@ -103,9 +108,11 @@ class BuilderEffects : Effects() {
     fun burnInSunTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
-                    && player.location.block.lightFromSky >= 15 // no block above head
-                    && player.equipment?.helmet == null // doesn't have a helmet
-                    && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
+            && player.world.nexusClassesEnabled
+            && player.location.block.lightFromSky >= 15 // no block above head
+            && player.world.isClearWeather // isn't raining or thundering
+            && player.equipment?.helmet == null // doesn't have a helmet
+            && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
             burningPlayers.add(player.uniqueId)
             player.fireTicks = 40
@@ -123,7 +130,10 @@ class BuilderEffects : Effects() {
     // Custom death message for burning to death in the sun
     @EventHandler
     fun burnDeathMessage(event: PlayerDeathEvent) {
-        if (event.entity.uniqueId in burningPlayers) {
+        if (
+            event.entity.uniqueId in burningPlayers
+            && event.entity.world.nexusClassesEnabled
+        ) {
             event.deathMessage = "${event.entity.name} forgot their hard hat"
             burningPlayers.remove(event.entity.uniqueId) // remove from burning players
         }
@@ -134,9 +144,11 @@ class BuilderEffects : Effects() {
     fun helmetDegradeTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
-                    && player.location.block.lightFromSky >= 15 // no block above head
-                    && player.equipment?.helmet != null // has a helmet
-                    && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
+            && player.world.nexusClassesEnabled
+            && player.location.block.lightFromSky >= 15 // no block above head
+            && player.world.isClearWeather // isn't raining or thundering
+            && player.equipment?.helmet != null // has a helmet
+            && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
             val helmet = player.equipment?.helmet
             val meta = helmet?.itemMeta

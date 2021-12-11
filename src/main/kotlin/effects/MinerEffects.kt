@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 
 /**
@@ -25,6 +26,7 @@ class MinerEffects : Effects() {
     fun freeEmerald(event: BlockBreakEvent) {
         if (
             event.player.nexusClass == NexusClass.Miner
+            && event.player.world.nexusClassesEnabled
             && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
             && event.block.type in arrayOf(
                 Material.GOLD_ORE,
@@ -43,6 +45,27 @@ class MinerEffects : Effects() {
         }
     }
 
+    // Perk: free night vison below y=60
+    @TimerTask(0, 10)
+    fun nightVisionTask() {
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.nexusClass == NexusClass.Miner
+            && player.world.nexusClassesEnabled
+            && player.location.y <= 60.0 // below y=60
+        }.forEach { player ->
+            // Set potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
+            player.addPotionEffect(PotionEffect(
+                PotionEffectType.NIGHT_VISION,
+                220,
+                0,
+                false,
+                false,
+                false
+            ))
+            player.sendDebugMessage("Miner perk: Free night vision")
+        }
+    }
+
     // Weakness: Extra damage from zombies
     @EventHandler
     fun zombieWeakness(event: EntityDamageByEntityEvent) {
@@ -50,32 +73,11 @@ class MinerEffects : Effects() {
         if (
             entity is Player
             && entity.nexusClass == NexusClass.Miner
+            && entity.world.nexusClassesEnabled
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
             entity.sendDebugMessage("Miner weakness: double damage from zombies!")
-        }
-    }
-
-    // Perk: free night vison below y=60
-    @TimerTask(0, 10)
-    fun nightVisionTask() {
-        Bukkit.getServer().onlinePlayers.filter { player ->
-            player.nexusClass == NexusClass.Miner
-                    && player.location.y <= 60.0 // below y=60
-        }.forEach { player ->
-            // Set potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
-            player.addPotionEffect(
-                PotionEffect(
-                PotionEffectType.NIGHT_VISION,
-                220,
-                0,
-                false,
-                false,
-                false
-            )
-            )
-            player.sendDebugMessage("Miner perk: Free night vision")
         }
     }
 }

@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.isClassItem
 import xyz.gary600.nexusclasses.extension.nexusClass
+import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.sendDebugMessage
 import java.util.*
 import kotlin.collections.HashSet
@@ -26,7 +27,9 @@ class ArtistEffects : Effects() {
     //FIXME: Pearls don't deal any damage on the CMURPA server for some reason?
     @EventHandler
     fun freeEndPearl(event: PlayerInteractEvent) {
-        if (event.action in arrayOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK)) {
+        if (
+            event.action in arrayOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK)
+        ) {
             val classItem = event.item
             if (
                 classItem?.type == Material.ENDER_PEARL
@@ -34,11 +37,15 @@ class ArtistEffects : Effects() {
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
                 && event.player.gameMode != GameMode.CREATIVE // don't give in creative mode, it's not used up
             ) {
-                if (event.player.nexusClass == NexusClass.Artist) {
+                // Free pearl if artist and in enabled world
+                if (
+                    event.player.nexusClass == NexusClass.Artist
+                    && event.player.world.nexusClassesEnabled
+                ) {
                     classItem.amount = 2
                     event.player.sendDebugMessage("Artist perk: free end pearl!")
                 }
-                // Don't let non-Artists use the pearl
+                // If not artist or not in world, delete pearl and prevent throwing it
                 else {
                     classItem.amount = 0
                     event.isCancelled = true
@@ -51,8 +58,9 @@ class ArtistEffects : Effects() {
     @TimerTask(0, 10)
     fun dissolveInWaterTask() {
         Bukkit.getServer().onlinePlayers.filter {
-                player -> player.nexusClass == NexusClass.Artist
-                && player.isInWater
+            player -> player.nexusClass == NexusClass.Artist
+            && player.world.nexusClassesEnabled
+            && player.isInWater
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
             player.damage(1.0) // Half-heart
@@ -72,7 +80,10 @@ class ArtistEffects : Effects() {
     // Custom death message for dissolving in water
     @EventHandler
     fun dissolveDeathMessage(event: PlayerDeathEvent) {
-        if (event.entity.uniqueId in dissolvingPlayers) {
+        if (
+            event.entity.uniqueId in dissolvingPlayers
+            && event.entity.world.nexusClassesEnabled
+        ) {
             event.deathMessage = "${event.entity.name} dissolved"
             dissolvingPlayers.remove(event.entity.uniqueId) // remove from dissolving players
         }

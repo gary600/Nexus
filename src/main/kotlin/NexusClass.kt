@@ -1,10 +1,5 @@
 package xyz.gary600.nexusclasses
 
-import co.aikar.commands.BukkitCommandExecutionContext
-import co.aikar.commands.InvalidCommandArgument
-import co.aikar.commands.MessageKeys
-import co.aikar.commands.contexts.ContextResolver
-
 enum class NexusClass {
     // Normal Minecraft character
     Mundane,

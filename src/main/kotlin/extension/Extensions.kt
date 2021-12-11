@@ -12,9 +12,6 @@ import xyz.gary600.nexusclasses.PlayerData
 
 // Extension functions/properties for Bukkit types to reduce code repetition
 
-
-// Player
-
 /**
  * Tracks this player's PlayerData
  */
@@ -58,7 +55,6 @@ fun Player.sendDebugMessage(msg: String) {
     }
 }
 
-// CommandSender
 /**
  * Sends a NexusClasses-styled message
  */
@@ -66,7 +62,6 @@ fun CommandSender.sendNexusMessage(msg: String) {
     sendMessage("§6[NexusClasses]§r $msg")
 }
 
-// ItemMeta
 /**
  * Tracks if this ItemMeta marks a class item
  */
@@ -84,7 +79,6 @@ var ItemMeta.isClassItem: Boolean
         )
     }
 
-// ItemStack
 /**
  * Tracks if this ItemStack is a class item
  */
@@ -92,7 +86,6 @@ var ItemStack.isClassItem: Boolean // wrapper around ItemMeta property
     get() = itemMeta?.isClassItem == true
     set(x) { itemMeta?.isClassItem = x }
 
-// World
 /**
  * Tracks if class effects are enabled in this world
  */
