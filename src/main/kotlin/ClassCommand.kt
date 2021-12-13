@@ -59,6 +59,7 @@ class ClassCommand : BaseCommand() {
         if (player.world.nexusClassesEnabled) {
             when (player.nexusClass) {
                 NexusClass.Builder -> giveClassItem(player, Material.STICK, "Transmute")
+                NexusClass.Miner -> giveClassItem(player, Material.LEATHER_HELMET, "Headlamp")
                 NexusClass.Artist -> giveClassItem(player, Material.ENDER_PEARL, "Planar Blink")
                 else -> {
                     player.nexusMessage("Class ${player.nexusClass} doesn't have a class item")

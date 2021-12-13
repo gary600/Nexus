@@ -12,14 +12,14 @@ import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.nexusDebugMessage
-import java.util.*
-import kotlin.collections.HashSet
+import java.util.UUID
 
 /**
  * All of the effects of the Artist class
  */
 @Suppress("unused") // EventHandler functions are used internally
 class ArtistEffects : Effects() {
+    // Set of players who are currently being hurt by being in water (for custom death message)
     private val dissolvingPlayers = HashSet<UUID>()
 
     // Perk: free end pearl at all times
@@ -43,7 +43,9 @@ class ArtistEffects : Effects() {
                     && event.player.world.nexusClassesEnabled
                 ) {
                     classItem.amount = 2
-                    event.player.nexusDebugMessage("Artist perk: free end pearl!")
+                    // Increase cooldown to 10 seconds
+                    event.player.setCooldown(Material.ENDER_PEARL, 200)
+                    event.player.nexusDebugMessage("Artist perk: free end pearl")
                 }
                 // If not artist or not in world, delete pearl and prevent throwing it
                 else {
@@ -64,7 +66,7 @@ class ArtistEffects : Effects() {
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
             player.damage(1.0) // Half-heart
-            player.nexusDebugMessage("Artist weakness: allergic to water!")
+            player.nexusDebugMessage("Artist weakness: allergic to water")
         }
     }
 
@@ -80,11 +82,10 @@ class ArtistEffects : Effects() {
     // Custom death message for dissolving in water
     @EventHandler
     fun dissolveDeathMessage(event: PlayerDeathEvent) {
-        if (
-            event.entity.uniqueId in dissolvingPlayers
-            && event.entity.world.nexusClassesEnabled
-        ) {
-            event.deathMessage = "${event.entity.name} dissolved"
+        if (event.entity.uniqueId in dissolvingPlayers) {
+            if (event.entity.world.nexusClassesEnabled) {
+                event.deathMessage = "${event.entity.name} dissolved"
+            }
             dissolvingPlayers.remove(event.entity.uniqueId) // remove from dissolving players
         }
     }

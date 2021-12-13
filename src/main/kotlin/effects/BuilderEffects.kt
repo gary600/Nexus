@@ -11,11 +11,10 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.meta.Damageable
 import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.itemNexusClass
+import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.nexusDebugMessage
 import java.util.*
@@ -25,7 +24,7 @@ import java.util.*
  */
 @Suppress("unused")
 class BuilderEffects : Effects() {
-    // Keeps track of which players are currently burning
+    // Keeps track of which players are currently burning (for custom death message)
     private val burningPlayers = HashSet<UUID>()
 
     // Perk: Inhibit fall damage
@@ -50,7 +49,6 @@ class BuilderEffects : Effects() {
         // Only trigger when block right-clicked with a Builder class-item stick
         if (
             event.action == Action.RIGHT_CLICK_BLOCK
-            && event.hand == EquipmentSlot.HAND
             && event.item?.type == Material.STICK
             && event.item?.itemNexusClass == NexusClass.Builder
         ) {
@@ -85,7 +83,7 @@ class BuilderEffects : Effects() {
                         32,
                         block.blockData
                     )
-                    // Play block break sound
+                    // Play magic noise
                     block.world.playSound(
                         block.location,
                         Sound.BLOCK_ENCHANTMENT_TABLE_USE,
@@ -93,7 +91,7 @@ class BuilderEffects : Effects() {
                         1.0f
                     )
 
-                    event.player.nexusDebugMessage("Builder perk: Block transmuted!")
+                    event.player.nexusDebugMessage("Builder perk: Block transmuted")
                 }
             }
             // If not builder or not in enabled world, delete item

@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexusclasses.effects.*
 import java.lang.ClassCastException
 import java.lang.IllegalArgumentException
-import java.util.*
+import java.util.UUID
 import kotlin.collections.HashMap
 
 /**

@@ -1,5 +1,6 @@
 package xyz.gary600.nexusclasses.effects
 
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
@@ -18,10 +19,13 @@ class ClassItemEffects : Effects() {
     // Prevent using a class item belonging to the wrong class or in a world with classes disabled
     @EventHandler
     fun preventUseWrongClassItem(event: PlayerInteractEvent) {
-        // If item has a class and it's not the same as the player
+        // If item has a class AND (it's not the same as the player's OR the player is in a non-class world)
         if (
-            (event.item?.itemNexusClass != null && event.player.nexusClass != event.item!!.itemNexusClass)
-            || !event.player.world.nexusClassesEnabled
+            event.item?.itemNexusClass != null
+            && (
+                event.player.nexusClass != event.item!!.itemNexusClass
+                || !event.player.world.nexusClassesEnabled
+            )
         ) {
             event.item?.amount = 0 // delete the item
             event.isCancelled = true // cancel interaction
@@ -32,6 +36,7 @@ class ClassItemEffects : Effects() {
     // Prevent dropping class items by that class, delete if dropped by another class
     @EventHandler
     fun preventDropClassItem(event: PlayerDropItemEvent) {
+        // If item has a class AND the player is in a class world
         if (
             event.itemDrop.itemStack.itemNexusClass != null
             && event.player.world.nexusClassesEnabled
@@ -51,13 +56,16 @@ class ClassItemEffects : Effects() {
     // Prevent putting class items in any other inventory
     @EventHandler
     fun preventMoveClassItem(event: InventoryClickEvent) {
+        // If (item is shift-clicked OR item is normally moved) AND player is in a class world
         if (
             // If shift clicked from player's inventory
+            //TODO: Allow shift-clicking into armor slots
             ((
                 event.click.isShiftClick
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
                 && event.currentItem?.itemNexusClass != null // item *under* cursor is the class item
             )
+            // TODO: Disable number key presses
             // If item moved into other inventory normally
             || (
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
@@ -66,6 +74,7 @@ class ClassItemEffects : Effects() {
             && event.whoClicked.world.nexusClassesEnabled
         ) {
             event.isCancelled = true
+            (event.whoClicked as? Player)?.nexusDebugMessage("Prevented moving class item")
         }
     }
     // Prevent dragging class items
@@ -76,6 +85,7 @@ class ClassItemEffects : Effects() {
             && event.whoClicked.world.nexusClassesEnabled
         ) {
             event.isCancelled = true
+            (event.whoClicked as? Player)?.nexusDebugMessage("Prevented dragging class item")
         }
     }
 }

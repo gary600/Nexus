@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
+import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
 import xyz.gary600.nexusclasses.extension.nexusDebugMessage
@@ -41,17 +42,22 @@ class MinerEffects : Effects() {
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            event.player.nexusDebugMessage("Miner perk: Free emerald!")
+            event.player.nexusDebugMessage("Miner perk: Free emerald")
         }
     }
 
     // Perk: free night vison below y=60
     @TimerTask(0, 10)
     fun nightVisionTask() {
+        // Give night vision to Miners wearing a headlamp (Miner-classed leather helmet) below y=60
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Miner
             && player.world.nexusClassesEnabled
             && player.location.y <= 60.0 // below y=60
+            && player.equipment?.helmet?.let {
+                it.type == Material.LEATHER_HELMET
+                && it.itemNexusClass == NexusClass.Miner
+            } == true
         }.forEach { player ->
             // Set potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
             player.addPotionEffect(PotionEffect(
@@ -77,7 +83,7 @@ class MinerEffects : Effects() {
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
-            entity.nexusDebugMessage("Miner weakness: double damage from zombies!")
+            entity.nexusDebugMessage("Miner weakness: increased damage from zombies")
         }
     }
 }

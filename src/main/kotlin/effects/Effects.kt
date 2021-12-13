@@ -41,7 +41,8 @@ abstract class Effects : Listener {
 }
 
 /**
- * Marks this function as being a Bukkit task to register with Scheduler.runTaskTimer
+ * Marks this function as being a Bukkit task to register with Scheduler.runTaskTimer.
+ * Annotated function must be public
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
