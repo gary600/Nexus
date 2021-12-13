@@ -8,6 +8,12 @@ plugins {
     idea // IntelliJ integration
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17)) // Modern Minecraft requires Java 17
+    }
+}
+
 // Places to fetch packages from
 repositories {
     mavenCentral() // Central package directory, for misc packages
@@ -44,13 +50,15 @@ tasks {
     }
 
     // Custom task: run Spigot
-    register<Exec>("runSpigot") {
+    register<JavaExec>("runSpigot") {
         // make sure jar is built and copied into correct folder
         dependsOn(shadowJar)
         dependsOn(copyJar)
 
-        // run Spigot
-        workingDir("$buildDir/server/")
-        commandLine("java", "-jar", "$buildDir/server/spigot.jar")
+        classpath = files("$buildDir/server/spigot.jar") // include Spigot jar - automatically finds main class
+        javaLauncher.set(rootProject.javaToolchains.launcherFor(java.toolchain)) // use the same java toolchain
+        workingDir("$buildDir/server/") // run in server directory, to keep project tree clean
+        standardInput = System.`in` // pipe stdin so console is accessible
+        args("-nogui") // run without the default ugly server gui
     }
 }

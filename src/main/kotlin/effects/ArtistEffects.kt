@@ -8,6 +8,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import xyz.gary600.nexusclasses.NexusClass
+import xyz.gary600.nexusclasses.NexusClasses
 import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
 import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
@@ -43,8 +44,12 @@ class ArtistEffects : Effects() {
                     && event.player.world.nexusClassesEnabled
                 ) {
                     classItem.amount = 2
-                    // Increase cooldown to 10 seconds
-                    event.player.setCooldown(Material.ENDER_PEARL, 200)
+                    // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
+                    Bukkit.getScheduler().runTaskLater(
+                        NexusClasses.instance!!,
+                        Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
+                        1
+                    )
                     event.player.nexusDebugMessage("Artist perk: free end pearl")
                 }
                 // If not artist or not in world, delete pearl and prevent throwing it
