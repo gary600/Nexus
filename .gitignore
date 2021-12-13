@@ -1,3 +1,6 @@
+# compilation outputs
 build/
+# gradle caches
 .gradle/
+# IntelliJ project files
 .idea/

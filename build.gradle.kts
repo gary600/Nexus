@@ -34,4 +34,23 @@ tasks {
     build {
         dependsOn(shadowJar) // for convenience, also build shadowJar when doing normal build
     }
+
+    // Custom task: copy fat jar into Spigot plugin folder
+    val copyJar by register<Copy>("copyJar") {
+        dependsOn(shadowJar) // make sure jar is built
+        from("$buildDir/libs/") // take from the libs output dir
+        include("*-all.jar") // copy the fat jar
+        into("$buildDir/server/plugins") // to server plugins folder
+    }
+
+    // Custom task: run Spigot
+    register<Exec>("runSpigot") {
+        // make sure jar is built and copied into correct folder
+        dependsOn(shadowJar)
+        dependsOn(copyJar)
+
+        // run Spigot
+        workingDir("$buildDir/server/")
+        commandLine("java", "-jar", "$buildDir/server/spigot.jar")
+    }
 }
