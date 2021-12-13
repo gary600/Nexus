@@ -1,5 +1,5 @@
 group = "xyz.gary600.nexusclasses"
-version = "0.1.1"
+version = "0.2.0"
 
 
 plugins {
