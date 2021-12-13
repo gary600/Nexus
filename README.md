@@ -4,42 +4,52 @@ Nexus Minecraft RP. It manages custom buffs and debuffs based on the
 player's chosen class.
 
 ## Command: `/nexusclass`, alias `/class`
-### Subcommand `/nexusclass choose <class>` (requires permission `nexusclasses.choose`):
+### Subcommand `/nexusclass choose <class>`:
+*Requires permission `nexusclasses.choose`*
+
 Selects your own class
 
-### Subcommand `/nexusclass set <class> <player>` (requires permission `nexusclasses.set`):
-Sets another player's class
-
-### Subcommand `/nexusclass get [<player>]`:
+### Subcommand `/nexusclass get [<player>]` (or just `/nexusclass [<player>]`):
 Gets your own class or another player's class
 
 ### Subcommand `/nexusclass item`:
-Gives you the specific item (the "class item") used to activate a class's ability, if applicable (Builder and Artist).
-Class items cannot be removed from your inventory.
+Gives you the specific item (the "class item") used to activate a class's ability,
+if applicable (Builder, Artist, and Miner). Class items cannot be removed from your inventory.
+
+### Admin subcommand `/nexusclass set <class> <player>`:
+*Requires permission `nexusclasses.set`*
+
+Sets a player's class
+
+### Admin subcommand `/nexusclass world <onoff>`:
+*Requires permission `nexusclasses.configure`*
+
+Enables or disabled NexusClasses in the current world. Class effects only occur in enabled worlds.
 
 ### Hidden subcommand `/nexusclass debugMessages <yesno>`:
-Enables or disables messages whenever a class ability activates. Very spammy, but useful for debugging
+Enables or disables messages whenever a class ability activates for you. Very spammy, but useful for debugging
 
 ## Classes and implementation
 Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):
-* no fall damage [FIXME]
-* transmute blocks
-* burn in sunlight w/o helmet
-* degrade helment in sunlight
+* **\+** no fall damage
+* **\+** transmute blocks
+* **\-** burn in sunlight w/o helmet
+* **\-** helmet degrades in sunlight
 
 Miner (`NexusClass.Miner`, effects in `effects.MinerEffects`):
-* free emerald from mining some ores
-* night vision below y=60
-* extra damage from zombies
+* **\+** free emerald from mining some ores
+* **\+** night vision below y=60 when wearing headlamp
+* **\-** extra damage from zombies
 
 Warrior (`NexusClass.Warrior`, effects in `effects.WarriorEffects`):
-* gold weapons light enemies on fire and give Strength II
-* wearing gold armor removes fire/lava damage [FIXME]
-* holding iron weapon gives mining fatigue, wearing iron armor gives slowness
+* **\+** all melee weapons have Fire Aspect I
+* **\+** gold weapons have Strength II
+* **\+** fire/lava immunity
+* **\-** holding iron weapon gives mining fatigue
 
 Artist (`NexusClass.Artist`, effects in `effects.ArtistEffects`):
-* free ender pearl at all times [FIXME]
-* take damage in water
+* **\+** free ender pearl at all times
+* **\-** take damage in water
 
 ## License
 This plugin is licensed under the Apache 2.0 license.
