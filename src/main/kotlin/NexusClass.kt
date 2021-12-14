@@ -25,8 +25,11 @@ enum class NexusClass(private val id: Byte?) {
             setDisplayName(name)
             lore = listOf("${cls.name} Class Item")
             isUnbreakable = true // for Miner's headlamp leather helmet
-            addEnchant(Enchantment.PROTECTION_EXPLOSIONS, 1, true) // Dummy enchant to add item glow
-            addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE) // Hide the enchants (nobody shall know it's really Blast Prot...)
+            addEnchant(Enchantment.LOYALTY, 1, true) // Dummy enchant to add item glow
+            addItemFlags(
+                ItemFlag.HIDE_ENCHANTS, // Hide the enchants (nobody shall know it's really Loyalty...)
+                ItemFlag.HIDE_UNBREAKABLE
+            )
 
             // Mark as class item so it works
             itemNexusClass = cls
