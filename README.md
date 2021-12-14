@@ -33,7 +33,8 @@ Enables or disables messages whenever a class ability activates for you. Very sp
 Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):
 * **\+** no fall damage
 * **\+** transmute blocks
-* **\-** burn in sunlight w/o helmet
+* **\+** jump higher
+* **\-** burn in sunlight without helmet
 * **\-** helmet degrades in sunlight
 
 Miner (`NexusClass.Miner`, effects in `effects.MinerEffects`):

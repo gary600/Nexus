@@ -12,6 +12,8 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.meta.Damageable
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexusclasses.NexusClass
 import xyz.gary600.nexusclasses.extension.itemNexusClass
 import xyz.gary600.nexusclasses.extension.nexusClass
@@ -90,6 +92,25 @@ class BuilderEffects : Effects() {
 
                 event.player.nexusDebugMessage("Builder perk: Block transmuted")
             }
+        }
+    }
+
+    // Perk: permanent jump boost II
+    @TimerTask(0, 10)
+    fun jumpBoost() {
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.nexusClass == NexusClass.Builder
+            && player.world.nexusClassesEnabled
+        }.forEach { player ->
+            player.addPotionEffect(PotionEffect(
+                PotionEffectType.JUMP,
+                20,
+                1, // 1 means level 2
+                false,
+                false,
+                false
+            ))
+            // no debug message because that'd be too spammy
         }
     }
 
