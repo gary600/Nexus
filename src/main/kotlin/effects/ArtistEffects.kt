@@ -33,30 +33,21 @@ class ArtistEffects : Effects() {
         ) {
             val classItem = event.item
             if (
-                classItem?.type == Material.ENDER_PEARL
+                event.player.nexusClass == NexusClass.Artist
+                && event.player.world.nexusClassesEnabled
+                && classItem?.type == Material.ENDER_PEARL
                 && classItem.itemNexusClass == NexusClass.Artist
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
                 && event.player.gameMode != GameMode.CREATIVE // don't give in creative mode, it's not used up
             ) {
-                // Free pearl if artist and in enabled world
-                if (
-                    event.player.nexusClass == NexusClass.Artist
-                    && event.player.world.nexusClassesEnabled
-                ) {
-                    classItem.amount = 2
-                    // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
-                    Bukkit.getScheduler().runTaskLater(
-                        NexusClasses.instance!!,
-                        Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
-                        1
-                    )
-                    event.player.nexusDebugMessage("Artist perk: free end pearl")
-                }
-                // If not artist or not in world, delete pearl and prevent throwing it
-                else {
-                    classItem.amount = 0
-                    event.isCancelled = true
-                }
+                classItem.amount = 2
+                // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
+                Bukkit.getScheduler().runTaskLater(
+                    NexusClasses.instance!!,
+                    Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
+                    1
+                )
+                event.player.nexusDebugMessage("Artist perk: free end pearl")
             }
         }
     }
@@ -71,7 +62,7 @@ class ArtistEffects : Effects() {
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
             player.damage(1.0) // Half-heart
-            player.nexusDebugMessage("Artist weakness: allergic to water")
+            player.nexusDebugMessage("Artist weakness: dissolving in water")
         }
     }
 

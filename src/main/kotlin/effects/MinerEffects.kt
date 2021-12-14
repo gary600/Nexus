@@ -30,14 +30,10 @@ class MinerEffects : Effects() {
             && event.player.world.nexusClassesEnabled
             && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
             && event.block.type in arrayOf(
-                Material.GOLD_ORE,
-                Material.DEEPSLATE_GOLD_ORE,
-                Material.LAPIS_ORE,
-                Material.DEEPSLATE_LAPIS_ORE,
-                Material.REDSTONE_ORE,
-                Material.DEEPSLATE_REDSTONE_ORE,
-                Material.DIAMOND_ORE,
-                Material.DEEPSLATE_DIAMOND_ORE
+                Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE,
+                Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE,
+                Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE,
+                Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE
             )
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is

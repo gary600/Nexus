@@ -39,7 +39,7 @@ class BuilderEffects : Effects() {
         ) {
             event.isCancelled = true
             event.damage = 0.0 // Cancelling doesn't seem to work on the CMURPGA server
-            entity.nexusDebugMessage("Builder perk: Fall damage cancelled!")
+            entity.nexusDebugMessage("Builder perk: Fall damage cancelled")
         }
     }
 
@@ -48,55 +48,47 @@ class BuilderEffects : Effects() {
     fun transmute(event: PlayerInteractEvent) {
         // Only trigger when block right-clicked with a Builder class-item stick
         if (
-            event.action == Action.RIGHT_CLICK_BLOCK
-            && event.item?.type == Material.STICK
+            event.player.nexusClass == NexusClass.Builder
+            && event.player.world.nexusClassesEnabled
+            && event.action == Action.RIGHT_CLICK_BLOCK
             && event.item?.itemNexusClass == NexusClass.Builder
+            && event.item?.type == Material.STICK
         ) {
-            // Transmute if builder and in enabled world
-            if (
-                event.player.nexusClass == NexusClass.Builder
-                && event.player.world.nexusClassesEnabled
-            ) {
-                val block = event.clickedBlock!! // cannot be null because of action type
-                val newType = when (block.type) {
-                    // Series 1: cobble -> stone -> stone brick -> obsidian
-                    Material.COBBLESTONE -> Material.STONE
-                    Material.STONE -> Material.STONE_BRICKS
-                    Material.STONE_BRICKS -> Material.OBSIDIAN
+            val block = event.clickedBlock!! // cannot be null because of action type
+            val newType = when (block.type) {
+                // Series 1: cobble -> stone -> stone brick -> obsidian
+                Material.COBBLESTONE -> Material.STONE
+                Material.STONE -> Material.STONE_BRICKS
+                Material.STONE_BRICKS -> Material.OBSIDIAN
 
-                    // Series 2: deepslate -> tuff -> nether brick -> blackstone -> obsidian
-                    Material.DEEPSLATE -> Material.TUFF
-                    Material.TUFF -> Material.NETHER_BRICKS
-                    Material.NETHER_BRICKS -> Material.BLACKSTONE
-                    Material.BLACKSTONE -> Material.OBSIDIAN
+                // Series 2: deepslate -> tuff -> nether brick -> blackstone -> obsidian
+                Material.DEEPSLATE -> Material.TUFF
+                Material.TUFF -> Material.NETHER_BRICKS
+                Material.NETHER_BRICKS -> Material.BLACKSTONE
+                Material.BLACKSTONE -> Material.OBSIDIAN
 
-                    // Otherwise keep it the same
-                    else -> null
-                }
-                if (newType != null) {
-                    // Set block type
-                    block.type = newType
-                    // Spawn particles at center of block
-                    block.world.spawnParticle(
-                        Particle.BLOCK_DUST,
-                        block.location.add(0.5, 0.5, 0.5),
-                        32,
-                        block.blockData
-                    )
-                    // Play magic noise
-                    block.world.playSound(
-                        block.location,
-                        Sound.BLOCK_ENCHANTMENT_TABLE_USE,
-                        1.0f,
-                        1.0f
-                    )
-
-                    event.player.nexusDebugMessage("Builder perk: Block transmuted")
-                }
+                // Otherwise keep it the same
+                else -> null
             }
-            // If not builder or not in enabled world, delete item
-            else {
-                event.player.inventory.itemInMainHand.amount = 0
+            if (newType != null) {
+                // Set block type
+                block.type = newType
+                // Spawn particles at center of block
+                block.world.spawnParticle(
+                    Particle.BLOCK_DUST,
+                    block.location.add(0.5, 0.5, 0.5),
+                    32,
+                    block.blockData
+                )
+                // Play magic noise
+                block.world.playSound(
+                    block.location,
+                    Sound.BLOCK_ENCHANTMENT_TABLE_USE,
+                    1.0f,
+                    1.0f
+                )
+
+                event.player.nexusDebugMessage("Builder perk: Block transmuted")
             }
         }
     }
