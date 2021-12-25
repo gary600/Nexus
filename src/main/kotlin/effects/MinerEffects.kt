@@ -42,7 +42,7 @@ class MinerEffects : Effects() {
         }
     }
 
-    // Perk: free night vison below y=60
+    // Perk: free night vison when wearing headlamp below y=60
     @TimerTask(0, 10)
     fun nightVisionTask() {
         // Give night vision to Miners wearing a headlamp (Miner-classed leather helmet) below y=60
@@ -55,7 +55,7 @@ class MinerEffects : Effects() {
                 && it.itemNexusClass == NexusClass.Miner
             } == true
         }.forEach { player ->
-            // Set potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
+            // Set night vision potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.NIGHT_VISION,
                 220,
@@ -65,6 +65,26 @@ class MinerEffects : Effects() {
                 false
             ))
             player.nexusDebugMessage("Miner perk: Free night vision")
+        }
+    }
+
+    // Perk: free haste below y=60
+    @TimerTask(0, 10)
+    fun hasteTask() {
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.nexusClass == NexusClass.Miner
+            && player.world.nexusClassesEnabled
+            && player.location.y <= 60.0
+        }.forEach { player ->
+            player.addPotionEffect(PotionEffect(
+                PotionEffectType.FAST_DIGGING,
+                20,
+                1, // haste 2
+                false,
+                false,
+                false
+            ))
+            player.nexusDebugMessage("Miner perk: Free haste")
         }
     }
 

@@ -13,16 +13,23 @@ class PlayerData : ConfigurationSerializable {
      */
     var debugMessages = false
 
+    /**
+     * This player's Spore level
+     */
+    var sporeLevel = 0.0
+
     override fun serialize(): Map<String, Any> = mapOf(
         "nexusClass" to nexusClass.name,
-        "debugMessages" to debugMessages
+        "debugMessages" to debugMessages,
+        "sporeLevel" to sporeLevel
     )
 
     companion object {
         fun deserialize(map: Map<String, Any?>): PlayerData {
             val pd = PlayerData()
-            pd.nexusClass = NexusClass.fromString(map["nexusClass"] as String?) ?: NexusClass.Mundane
-            pd.debugMessages = map["debugMessages"] as Boolean? ?: false
+            pd.nexusClass = NexusClass.fromString(map["nexusClass"] as? String?) ?: NexusClass.Mundane
+            pd.debugMessages = map["debugMessages"] as? Boolean? ?: false
+            pd.sporeLevel = map["sporeLevel"] as? Double? ?: 0.0
 
             return pd
         }

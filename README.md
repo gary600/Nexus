@@ -31,6 +31,7 @@ Enables or disables messages whenever a class ability activates for you. Very sp
 
 ## Classes and implementation
 Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):
+* class item: transmutation wand (stick)
 * **\+** no fall damage
 * **\+** transmute blocks
 * **\+** jump higher
@@ -38,8 +39,10 @@ Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):
 * **\-** helmet degrades in sunlight
 
 Miner (`NexusClass.Miner`, effects in `effects.MinerEffects`):
+* class item: headlamp (leather helmet)
 * **\+** free emerald from mining some ores
 * **\+** night vision below y=60 when wearing headlamp
+* **\+** haste II below y=60
 * **\-** extra damage from zombies
 
 Warrior (`NexusClass.Warrior`, effects in `effects.WarriorEffects`):
@@ -49,6 +52,7 @@ Warrior (`NexusClass.Warrior`, effects in `effects.WarriorEffects`):
 * **\-** holding iron weapon gives mining fatigue
 
 Artist (`NexusClass.Artist`, effects in `effects.ArtistEffects`):
+* class item: blink orb (ender pearl)
 * **\+** free ender pearl at all times
 * **\-** take damage in water
 
