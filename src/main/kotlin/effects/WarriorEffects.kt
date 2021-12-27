@@ -26,8 +26,8 @@ class WarriorEffects : Effects() {
             && damager.nexusClass == NexusClass.Warrior
             && damager.world.nexusClassesEnabled
             && damager.inventory.itemInMainHand.type in arrayOf(
-                Material.WOODEN_SWORD, Material.WOODEN_AXE,
-                Material.STONE_SWORD, Material.STONE_AXE,
+//                Material.WOODEN_SWORD, Material.WOODEN_AXE, // removed per request
+//                Material.STONE_SWORD, Material.STONE_AXE,
                 Material.IRON_SWORD, Material.IRON_AXE,
                 Material.GOLDEN_SWORD, Material.GOLDEN_AXE,
                 Material.DIAMOND_SWORD, Material.DIAMOND_AXE,

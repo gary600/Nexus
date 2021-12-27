@@ -46,7 +46,7 @@ Miner (`NexusClass.Miner`, effects in `effects.MinerEffects`):
 * **\-** extra damage from zombies
 
 Warrior (`NexusClass.Warrior`, effects in `effects.WarriorEffects`):
-* **\+** all melee weapons have Fire Aspect I
+* **\+** all melee weapons better than stone have Fire Aspect I
 * **\+** gold weapons have Strength II
 * **\+** fire/lava immunity
 * **\-** holding iron weapon gives mining fatigue
