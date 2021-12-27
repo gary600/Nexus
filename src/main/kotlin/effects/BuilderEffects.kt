@@ -92,6 +92,12 @@ class BuilderEffects : Effects() {
 
                 event.player.nexusDebugMessage("Builder perk: Block transmuted")
             }
+            else {
+                // Play fail noise
+                block.world.playSound(block.location, Sound.BLOCK_GRAVEL_HIT, 1.0f, 1.0f)
+
+                event.player.nexusDebugMessage("Cannot transmute block")
+            }
         }
     }
 

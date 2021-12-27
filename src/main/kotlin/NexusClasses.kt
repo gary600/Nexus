@@ -21,11 +21,11 @@ class NexusClasses : JavaPlugin() {
     val worlds = HashSet<UUID>()
 
     init {
-        if (instance != null) {
+        if (instance_internal != null) {
             throw Exception("Only one NexusClasses instance may exist")
         }
         // Store singleton instance
-        instance = this
+        instance_internal = this
     }
 
     fun saveData() {
@@ -96,7 +96,12 @@ class NexusClasses : JavaPlugin() {
     companion object {
         // Singleton instance
         // Note: cannot use Kotlin-style singleton because Bukkit's API requires a constructor to exist
-        var instance: NexusClasses? = null
+        var instance_internal: NexusClasses? = null
             private set
+
+        // Wrapper to clean up plugin references: since nothing should ever interact with the singleton instance
+        // before the plugin is instantiated, it's fine to throw an NPE if something does
+        val instance: NexusClasses
+            get() = instance_internal ?: throw NullPointerException("NexusClasses has not yet been instantiated")
     }
 }

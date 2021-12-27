@@ -18,12 +18,12 @@ import xyz.gary600.nexusclasses.PlayerData
 val Player.playerData: PlayerData
     // Get this player's PlayerData, or create it if it doesn't exist
     get() {
-        val data = NexusClasses.instance!!.playerData[uniqueId]
+        val data = NexusClasses.instance.playerData[uniqueId]
 
         // If there's no data for this player, create it and store it in the map
         return if (data == null) {
             val newData = PlayerData()
-            NexusClasses.instance!!.playerData[uniqueId] = newData
+            NexusClasses.instance.playerData[uniqueId] = newData
             newData
         }
         // Otherwise return it
@@ -68,13 +68,13 @@ fun CommandSender.nexusMessage(msg: String) {
 var ItemMeta.itemNexusClass: NexusClass?
     get() =
         persistentDataContainer.get( // Get the class item tag
-            NexusClasses.instance!!.classItemKey,
+            NexusClasses.instance.classItemKey,
             PersistentDataType.BYTE
         )
             ?.let(NexusClass::fromByte) // Parse it to a NexusClass
     set(x) {
         persistentDataContainer.set(
-            NexusClasses.instance!!.classItemKey,
+            NexusClasses.instance.classItemKey,
             PersistentDataType.BYTE,
             x?.toByte() ?: 0 // 0 if Mundane
         )
@@ -91,9 +91,9 @@ var ItemStack.itemNexusClass: NexusClass? // wrapper around ItemMeta property
  * Tracks if class effects are enabled in this world
  */
 var World.nexusClassesEnabled: Boolean
-    get() = this.uid in NexusClasses.instance!!.worlds
+    get() = this.uid in NexusClasses.instance.worlds
     set(x) {
-        NexusClasses.instance!!.worlds.let {
+        NexusClasses.instance.worlds.let {
             when (x) {
                 true -> it.add(this.uid)
                 false -> it.remove(this.uid)

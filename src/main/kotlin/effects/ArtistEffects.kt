@@ -25,7 +25,6 @@ class ArtistEffects : Effects() {
 
     // Perk: free end pearl at all times
     //TODO: prevent giving when clicking a chest/other interactable block
-    //FIXME: Pearls don't deal any damage on the CMURPA server for some reason?
     @EventHandler
     fun freeEndPearl(event: PlayerInteractEvent) {
         if (
@@ -43,7 +42,7 @@ class ArtistEffects : Effects() {
                 classItem.amount = 2
                 // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
                 Bukkit.getScheduler().runTaskLater(
-                    NexusClasses.instance!!,
+                    NexusClasses.instance,
                     Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
                     1
                 )

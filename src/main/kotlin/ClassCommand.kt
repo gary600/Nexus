@@ -20,7 +20,7 @@ class ClassCommand : BaseCommand() {
     @CommandPermission("nexusclasses.choose")
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         player.nexusClass = nexusClass
-        NexusClasses.instance!!.saveData()
+        NexusClasses.instance.saveData()
         player.nexusMessage("Your class is now ${nexusClass.name}")
     }
 
@@ -30,7 +30,7 @@ class ClassCommand : BaseCommand() {
     @CommandPermission("nexusclasses.set")
     fun commandSet(sender: CommandSender, player: OnlinePlayer, nexusClass: NexusClass) {
         player.player.nexusClass = nexusClass
-        NexusClasses.instance!!.saveData()
+        NexusClasses.instance.saveData()
         player.player.nexusMessage("Your class has been set to ${nexusClass.name}")
         sender.nexusMessage("Set ${player.player.displayName}'s class to ${nexusClass.name}")
     }
@@ -97,12 +97,12 @@ class ClassCommand : BaseCommand() {
             }
             true -> {
                 player.world.nexusClassesEnabled = true
-                NexusClasses.instance!!.saveData()
+                NexusClasses.instance.saveData()
                 player.nexusMessage("Class effects enabled for this world")
             }
             false -> {
                 player.world.nexusClassesEnabled = false
-                NexusClasses.instance!!.saveData()
+                NexusClasses.instance.saveData()
                 player.nexusMessage("Class effects disabled for this world")
             }
         }
@@ -112,7 +112,7 @@ class ClassCommand : BaseCommand() {
     @Private
     fun commandMessages(player: Player, yesno: Boolean) {
         player.debugMessages = yesno
-        NexusClasses.instance!!.saveData()
+        NexusClasses.instance.saveData()
         if (yesno) {
             player.nexusMessage("You will now receive debug messages")
         }
