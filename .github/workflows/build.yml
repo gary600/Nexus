@@ -7,7 +7,9 @@ jobs:
       - name: Fetch source
         uses: actions/checkout@v2
       - name: Build
-        run: ./gradlew shadowJar
+        run: |
+          chmod +x gradlew
+          ./gradlew shadowJar
       - name: Upload jar as artifact
         uses: actions/upload-artifact@v2
         with:
