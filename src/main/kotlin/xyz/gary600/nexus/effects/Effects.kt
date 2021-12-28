@@ -2,8 +2,8 @@ package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
+import org.bukkit.scheduler.BukkitRunnable
 import xyz.gary600.nexus.Nexus
-import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
@@ -20,33 +20,27 @@ abstract class Effects : Listener {
     fun register() {
         // Prevent registering multiple times
         if (registered) {
-            throw Exception("This Effects class has already been registered")
+            throw IllegalStateException("This Effects class has already been registered")
         }
 
         // Register event handlers normally
         Bukkit.getServer().pluginManager.registerEvents(this, Nexus.plugin)
 
-        // Use reflection to find all annotated functions
+        // Use reflection to find TimerTasks
         this::class.declaredMemberFunctions // for each declared member function (not static)
             .map { it to it.findAnnotation<TimerTask>() } // get its TimerTask annotation
             .filter { (_, ann) -> ann != null } // skip it if the annotation is not found
             .forEach { (fn, ann) ->
-            Bukkit.getServer().scheduler.runTaskTimer( // register the task by wrapping it in a TaskWrapper
-                Nexus.plugin,
-                TaskWrapper(this, fn),
-                ann!!.delay,
-                ann.period
-            )
-        }
+                val fx = this // for referencing within anonymous object
+                // Wrap function in a BukkitRunnable and schedule it
+                object: BukkitRunnable() {
+                    override fun run() {
+                        fn.call(fx) // dispatch to actual function
+                    }
+                }.runTaskTimer(Nexus.plugin, ann!!.delay, ann.period)
+            }
 
         registered = true
-    }
-
-    // Internal wrapper
-    private class TaskWrapper(private val fx: Effects, private val fn: KFunction<*>) : Runnable {
-        override fun run() {
-            fn.call(fx) // just dispatch out to the actual function
-        }
     }
 }
 
