@@ -40,11 +40,10 @@ object ArtistEffects : Effects() {
                 && event.player.gameMode != GameMode.CREATIVE // don't give in creative mode, it's not used up
             ) {
                 classItem.amount = 2
-                // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
-                Bukkit.getScheduler().runTaskLater(
+                // Increase cooldown to 10 seconds (deferred by a tick to prevent it from cancelling this event)
+                Bukkit.getScheduler().runTask(
                     Nexus.plugin,
-                    Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
-                    1
+                    Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) }
                 )
                 event.player.nexusDebugMessage("Artist perk: free end pearl")
             }

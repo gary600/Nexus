@@ -2,7 +2,6 @@ package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
-import org.bukkit.scheduler.BukkitRunnable
 import xyz.gary600.nexus.Nexus
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
@@ -31,13 +30,13 @@ abstract class Effects : Listener {
             .map { it to it.findAnnotation<TimerTask>() } // get its TimerTask annotation
             .filter { (_, ann) -> ann != null } // skip it if the annotation is not found
             .forEach { (fn, ann) ->
-                val fx = this // for referencing within anonymous object
-                // Wrap function in a BukkitRunnable and schedule it
-                object: BukkitRunnable() {
-                    override fun run() {
-                        fn.call(fx) // dispatch to actual function
-                    }
-                }.runTaskTimer(Nexus.plugin, ann!!.delay, ann.period)
+                // Wrap function in a Runnable and schedule it
+                Bukkit.getScheduler().runTaskTimer(
+                    Nexus.plugin,
+                    Runnable { fn.call(this) }, // dispatch to actual function (`this` is Effects)
+                    ann!!.delay,
+                    ann.period
+                )
             }
 
         registered = true
