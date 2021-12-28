@@ -7,7 +7,7 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
 /**
- * The base class of the various Effects objects. Simplifies registering event handlers and tasks
+ * The base class of the various Effects objects. Allows registering event handlers and tasks via a declarative API
  */
 abstract class Effects : Listener {
 

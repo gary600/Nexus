@@ -6,6 +6,9 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import xyz.gary600.nexus.extension.itemNexusClass
 
+/**
+ * The various character classes in Nexus
+ */
 enum class NexusClass {
     // Normal Minecraft character
     Mundane,

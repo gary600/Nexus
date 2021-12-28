@@ -51,7 +51,7 @@ var Player.debugMessages: Boolean
  */
 fun Player.nexusDebugMessage(msg: String) {
     if (debugMessages) {
-        nexusMessage(msg)
+        nexusMessage("§oDEBUG:§r $msg")
     }
 }
 
@@ -97,7 +97,7 @@ var ItemMeta.itemNexusClass: NexusClass?
 /**
  * Get or set this ItemStack's Nexus class
  */
-var ItemStack.itemNexusClass: NexusClass? // wrapper around ItemMeta property
+var ItemStack.itemNexusClass: NexusClass?
     get() = itemMeta?.itemNexusClass
     set(x) { itemMeta?.itemNexusClass = x }
 
