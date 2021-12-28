@@ -1,15 +1,15 @@
-# NexusClasses
+# Nexus
 This is a custom Bukkit/Spigot plugin written specifically for CMURPGA's
 Nexus Minecraft RP. It manages custom buffs and debuffs based on the
 player's chosen class.
 
-## Command: `/nexusclass`, alias `/class`
+## Class command: `/nexusclass`, alias `/class`
 ### Subcommand `/nexusclass choose <class>`:
-*Requires permission `nexusclasses.choose`*
+*Requires permission `nexus.class.choose`*
 
 Selects your own class
 
-### Subcommand `/nexusclass get [<player>]` (or just `/nexusclass [<player>]`):
+### Subcommand `/nexusclass get [<player>]`:
 Gets your own class or another player's class
 
 ### Subcommand `/nexusclass item`:
@@ -17,17 +17,18 @@ Gives you the specific item (the "class item") used to activate a class's abilit
 if applicable (Builder, Artist, and Miner). Class items cannot be removed from your inventory.
 
 ### Admin subcommand `/nexusclass set <class> <player>`:
-*Requires permission `nexusclasses.set`*
+*Requires permission `nexus.class.set`*
 
 Sets a player's class
 
-### Admin subcommand `/nexusclass world <onoff>`:
-*Requires permission `nexusclasses.configure`*
+## Misc command: `/nexus`
+### Subcommand `/nexus debug <enabled>`:
+Enables or disables debug messages. Very spammy, but useful for debugging
 
-Enables or disabled NexusClasses in the current world. Class effects only occur in enabled worlds.
+### Admin subcommand `/nexus world [<enabled>]`:
+*Requires permission `nexus.configure`*
 
-### Hidden subcommand `/nexusclass debugMessages <yesno>`:
-Enables or disables messages whenever a class ability activates for you. Very spammy, but useful for debugging
+Enables or disables the plugin in the current world. Class effects only occur in enabled worlds.
 
 ## Classes and implementation
 Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):

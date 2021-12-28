@@ -1,10 +1,10 @@
-package xyz.gary600.nexusclasses
+package xyz.gary600.nexus
 
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import xyz.gary600.nexusclasses.extension.itemNexusClass
+import xyz.gary600.nexus.extension.itemNexusClass
 
 enum class NexusClass(private val id: Byte?) {
     // Normal Minecraft character

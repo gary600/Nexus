@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -6,16 +6,16 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import xyz.gary600.nexusclasses.extension.itemNexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.nexusDebugMessage
+import xyz.gary600.nexus.extension.itemNexusClass
+import xyz.gary600.nexus.extension.nexusClass
+import xyz.gary600.nexus.extension.nexusEnabled
+import xyz.gary600.nexus.extension.nexusDebugMessage
 
 /**
  * Miscellaneous effects to manage class items
  */
 @Suppress("unused")
-class ClassItemEffects : Effects() {
+object ClassItemEffects : Effects() {
     // Prevent using a class item belonging to the wrong class or in a world with classes disabled
     @EventHandler
     fun preventUseWrongClassItem(event: PlayerInteractEvent) {
@@ -24,7 +24,7 @@ class ClassItemEffects : Effects() {
             event.item?.itemNexusClass != null
             && (
                 event.player.nexusClass != event.item!!.itemNexusClass
-                || !event.player.world.nexusClassesEnabled
+                || !event.player.world.nexusEnabled
             )
         ) {
             event.item?.amount = 0 // delete the item
@@ -39,7 +39,7 @@ class ClassItemEffects : Effects() {
         // If item has a class AND the player is in a class world
         if (
             event.itemDrop.itemStack.itemNexusClass != null
-            && event.player.world.nexusClassesEnabled
+            && event.player.world.nexusEnabled
         ) {
             // Players of that class can't drop the item
             if (event.player.nexusClass == event.itemDrop.itemStack.itemNexusClass) {
@@ -65,13 +65,13 @@ class ClassItemEffects : Effects() {
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
                 && event.currentItem?.itemNexusClass != null // item *under* cursor is the class item
             )
-            // TODO: Disable number key presses
             // If item moved into other inventory normally
             || (
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
                 && event.cursor?.itemNexusClass != null // item *on* cursor is the class item
             ))
-            && event.whoClicked.world.nexusClassesEnabled
+            //TODO: Also disable moving via number keys
+            && event.whoClicked.world.nexusEnabled
         ) {
             event.isCancelled = true
             (event.whoClicked as? Player)?.nexusDebugMessage("Prevented moving class item")
@@ -82,7 +82,7 @@ class ClassItemEffects : Effects() {
     fun preventDragClassItem(event: InventoryDragEvent) {
         if (
             event.oldCursor.itemNexusClass != null
-            && event.whoClicked.world.nexusClassesEnabled
+            && event.whoClicked.world.nexusEnabled
         ) {
             event.isCancelled = true
             (event.whoClicked as? Player)?.nexusDebugMessage("Prevented dragging class item")

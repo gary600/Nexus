@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -11,23 +11,23 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.itemNexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.nexusDebugMessage
+import xyz.gary600.nexus.NexusClass
+import xyz.gary600.nexus.extension.itemNexusClass
+import xyz.gary600.nexus.extension.nexusClass
+import xyz.gary600.nexus.extension.nexusEnabled
+import xyz.gary600.nexus.extension.nexusDebugMessage
 
 /**
  * All of the effects of the Miner class
  */
 @Suppress("unused")
-class MinerEffects : Effects() {
+object MinerEffects : Effects() {
     // Perk: Certain ores additionally drop emerald
     @EventHandler
     fun freeEmerald(event: BlockBreakEvent) {
         if (
             event.player.nexusClass == NexusClass.Miner
-            && event.player.world.nexusClassesEnabled
+            && event.player.world.nexusEnabled
             && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
             && event.block.type in arrayOf(
                 Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE,
@@ -48,7 +48,7 @@ class MinerEffects : Effects() {
         // Give night vision to Miners wearing a headlamp (Miner-classed leather helmet) below y=60
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Miner
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.location.y <= 60.0 // below y=60
             && player.equipment?.helmet?.let {
                 it.type == Material.LEATHER_HELMET
@@ -73,7 +73,7 @@ class MinerEffects : Effects() {
     fun hasteTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Miner
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.location.y <= 60.0
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
@@ -95,7 +95,7 @@ class MinerEffects : Effects() {
         if (
             entity is Player
             && entity.nexusClass == NexusClass.Miner
-            && entity.world.nexusClassesEnabled
+            && entity.world.nexusEnabled
             && event.damager is Zombie
         ) {
             event.damage *= 1.2

@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses
+package xyz.gary600.nexus
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 

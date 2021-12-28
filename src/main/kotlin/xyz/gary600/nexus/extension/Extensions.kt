@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.extension
+package xyz.gary600.nexus.extension
 
 import org.bukkit.World
 import org.bukkit.command.CommandSender
@@ -6,24 +6,24 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
-import xyz.gary600.nexusclasses.PlayerData
+import xyz.gary600.nexus.NexusClass
+import xyz.gary600.nexus.Nexus
+import xyz.gary600.nexus.PlayerData
 
 // Extension functions/properties for Bukkit types to reduce code repetition
 
 /**
  * Tracks this player's PlayerData
  */
-val Player.playerData: PlayerData
+val Player.nexusPlayerData: PlayerData
     // Get this player's PlayerData, or create it if it doesn't exist
     get() {
-        val data = NexusClasses.instance.playerData[uniqueId]
+        val data = Nexus.instance.playerData[uniqueId]
 
         // If there's no data for this player, create it and store it in the map
         return if (data == null) {
             val newData = PlayerData()
-            NexusClasses.instance.playerData[uniqueId] = newData
+            Nexus.instance.playerData[uniqueId] = newData
             newData
         }
         // Otherwise return it
@@ -36,15 +36,15 @@ val Player.playerData: PlayerData
  * Tracks this player's class
  */
 var Player.nexusClass: NexusClass
-    get() = this.playerData.nexusClass
-    set(x) {this.playerData.nexusClass = x}
+    get() = this.nexusPlayerData.nexusClass
+    set(x) {this.nexusPlayerData.nexusClass = x}
 
 /**
  * Tracks if this player is subscribed to debug messages
  */
 var Player.debugMessages: Boolean
-    get() = this.playerData.debugMessages
-    set(x) {this.playerData.debugMessages = x}
+    get() = this.nexusPlayerData.debugMessages
+    set(x) {this.nexusPlayerData.debugMessages = x}
 
 /**
  * Sends a debug message to the player if they're subscribed to them
@@ -56,10 +56,10 @@ fun Player.nexusDebugMessage(msg: String) {
 }
 
 /**
- * Sends a NexusClasses-styled message
+ * Sends a Nexus-styled message
  */
 fun CommandSender.nexusMessage(msg: String) {
-    sendMessage("§6[NexusClasses]§r $msg")
+    sendMessage("§6[Nexus]§r $msg")
 }
 
 /**
@@ -68,13 +68,13 @@ fun CommandSender.nexusMessage(msg: String) {
 var ItemMeta.itemNexusClass: NexusClass?
     get() =
         persistentDataContainer.get( // Get the class item tag
-            NexusClasses.instance.classItemKey,
+            Nexus.instance.classItemKey,
             PersistentDataType.BYTE
         )
             ?.let(NexusClass::fromByte) // Parse it to a NexusClass
     set(x) {
         persistentDataContainer.set(
-            NexusClasses.instance.classItemKey,
+            Nexus.instance.classItemKey,
             PersistentDataType.BYTE,
             x?.toByte() ?: 0 // 0 if Mundane
         )
@@ -90,10 +90,10 @@ var ItemStack.itemNexusClass: NexusClass? // wrapper around ItemMeta property
 /**
  * Tracks if class effects are enabled in this world
  */
-var World.nexusClassesEnabled: Boolean
-    get() = this.uid in NexusClasses.instance.worlds
+var World.nexusEnabled: Boolean
+    get() = this.uid in Nexus.instance.worlds
     set(x) {
-        NexusClasses.instance.worlds.let {
+        Nexus.instance.worlds.let {
             when (x) {
                 true -> it.add(this.uid)
                 false -> it.remove(this.uid)

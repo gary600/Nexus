@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -7,16 +7,16 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.nexusDebugMessage
+import xyz.gary600.nexus.NexusClass
+import xyz.gary600.nexus.extension.nexusClass
+import xyz.gary600.nexus.extension.nexusEnabled
+import xyz.gary600.nexus.extension.nexusDebugMessage
 
 /**
  * All of the effects of the Warrior class
  */
 @Suppress("unused")
-class WarriorEffects : Effects() {
+object WarriorEffects : Effects() {
     // Perk: Automatic fire aspect on melee weapons
     @EventHandler
     fun meleeFireAspect(event: EntityDamageByEntityEvent) {
@@ -24,7 +24,7 @@ class WarriorEffects : Effects() {
         if (
             damager is Player
             && damager.nexusClass == NexusClass.Warrior
-            && damager.world.nexusClassesEnabled
+            && damager.world.nexusEnabled
             && damager.inventory.itemInMainHand.type in arrayOf(
 //                Material.WOODEN_SWORD, Material.WOODEN_AXE, // removed per request
 //                Material.STONE_SWORD, Material.STONE_AXE,
@@ -46,7 +46,7 @@ class WarriorEffects : Effects() {
         if (
             damager is Player
             && damager.nexusClass == NexusClass.Warrior
-            && damager.world.nexusClassesEnabled
+            && damager.world.nexusEnabled
             && damager.inventory.itemInMainHand.type in arrayOf(
                 Material.GOLDEN_SWORD,
                 Material.GOLDEN_AXE
@@ -62,7 +62,7 @@ class WarriorEffects : Effects() {
     fun fireResist() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.FIRE_RESISTANCE,
@@ -81,7 +81,7 @@ class WarriorEffects : Effects() {
     fun ironAllergy() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Warrior
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.inventory.itemInMainHand.type in arrayOf(Material.IRON_SWORD, Material.IRON_AXE)
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(

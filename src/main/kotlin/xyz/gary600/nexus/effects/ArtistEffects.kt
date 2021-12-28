@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -7,19 +7,19 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.NexusClasses
-import xyz.gary600.nexusclasses.extension.itemNexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.nexusDebugMessage
+import xyz.gary600.nexus.NexusClass
+import xyz.gary600.nexus.Nexus
+import xyz.gary600.nexus.extension.itemNexusClass
+import xyz.gary600.nexus.extension.nexusClass
+import xyz.gary600.nexus.extension.nexusEnabled
+import xyz.gary600.nexus.extension.nexusDebugMessage
 import java.util.UUID
 
 /**
  * All of the effects of the Artist class
  */
 @Suppress("unused") // EventHandler functions are used internally
-class ArtistEffects : Effects() {
+object ArtistEffects : Effects() {
     // Set of players who are currently being hurt by being in water (for custom death message)
     private val dissolvingPlayers = HashSet<UUID>()
 
@@ -33,7 +33,7 @@ class ArtistEffects : Effects() {
             val classItem = event.item
             if (
                 event.player.nexusClass == NexusClass.Artist
-                && event.player.world.nexusClassesEnabled
+                && event.player.world.nexusEnabled
                 && classItem?.type == Material.ENDER_PEARL
                 && classItem.itemNexusClass == NexusClass.Artist
                 && event.player.getCooldown(Material.ENDER_PEARL) <= 0 // don't give pearl when on pearl cooldown
@@ -42,7 +42,7 @@ class ArtistEffects : Effects() {
                 classItem.amount = 2
                 // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
                 Bukkit.getScheduler().runTaskLater(
-                    NexusClasses.instance,
+                    Nexus.instance,
                     Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
                     1
                 )
@@ -56,7 +56,7 @@ class ArtistEffects : Effects() {
     fun dissolveInWaterTask() {
         Bukkit.getServer().onlinePlayers.filter {
             player -> player.nexusClass == NexusClass.Artist
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.isInWater
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
@@ -78,7 +78,7 @@ class ArtistEffects : Effects() {
     @EventHandler
     fun dissolveDeathMessage(event: PlayerDeathEvent) {
         if (event.entity.uniqueId in dissolvingPlayers) {
-            if (event.entity.world.nexusClassesEnabled) {
+            if (event.entity.world.nexusEnabled) {
                 event.deathMessage = "${event.entity.name} dissolved"
             }
             dissolvingPlayers.remove(event.entity.uniqueId) // remove from dissolving players

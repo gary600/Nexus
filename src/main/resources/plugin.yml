@@ -1,33 +1,41 @@
-name: NexusClasses
-version: 0.2.0
+name: Nexus
+version: 0.3.0
 author: gary600
-main: xyz.gary600.nexusclasses.NexusClasses
-api-version: 1.17 # Use latest API
+main: xyz.gary600.nexus.Nexus
+api-version: 1.17
 
 permissions:
-  nexusclasses.choose:
+  nexus.class.choose:
     description: Allows choosing one's own class
     default: true
 
-  nexusclasses.set:
+  nexus.class.set:
     description: Allows setting other players' classes
     default: op
 
-  nexusclasses.configure:
+  nexus.class.*:
+    default: op
+    children:
+      - nexus.class.choose
+      - nexus.class.set
+
+  nexus.configure:
     description: Allows changing configuration, such as enabled worlds
     default: op
 
-  nexusclasses.*:
-    description: Wildcard permission
+  nexus.*:
     default: op
     children:
-      - nexusclasses.choose
-      - nexusclasses.set
-      - nexusclasses.configure
+      - nexus.class.*
+      - nexus.configure
 
 commands:
   nexusclass:
-    description: foo
+    description: Manages your Nexus class
     aliases:
       - class
-    usage: /nexusclass choose|get|set|item|world
+    usage: /nexusclass choose|get|set|item
+
+  nexus:
+    description: Miscellaneous Nexus commands
+    usage: /nexus world|debug

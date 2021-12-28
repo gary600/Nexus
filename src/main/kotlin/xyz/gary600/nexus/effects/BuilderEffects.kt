@@ -1,4 +1,4 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -14,18 +14,18 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import xyz.gary600.nexusclasses.NexusClass
-import xyz.gary600.nexusclasses.extension.itemNexusClass
-import xyz.gary600.nexusclasses.extension.nexusClass
-import xyz.gary600.nexusclasses.extension.nexusClassesEnabled
-import xyz.gary600.nexusclasses.extension.nexusDebugMessage
+import xyz.gary600.nexus.NexusClass
+import xyz.gary600.nexus.extension.itemNexusClass
+import xyz.gary600.nexus.extension.nexusClass
+import xyz.gary600.nexus.extension.nexusEnabled
+import xyz.gary600.nexus.extension.nexusDebugMessage
 import java.util.*
 
 /**
  * All of the effects of the Builder class
  */
 @Suppress("unused")
-class BuilderEffects : Effects() {
+object BuilderEffects : Effects() {
     // Keeps track of which players are currently burning (for custom death message)
     private val burningPlayers = HashSet<UUID>()
 
@@ -36,7 +36,7 @@ class BuilderEffects : Effects() {
         if (
             entity is Player
             && entity.nexusClass == NexusClass.Builder
-            && entity.world.nexusClassesEnabled
+            && entity.world.nexusEnabled
             && event.cause == EntityDamageEvent.DamageCause.FALL
         ) {
             event.isCancelled = true
@@ -51,7 +51,7 @@ class BuilderEffects : Effects() {
         // Only trigger when block right-clicked with a Builder class-item stick
         if (
             event.player.nexusClass == NexusClass.Builder
-            && event.player.world.nexusClassesEnabled
+            && event.player.world.nexusEnabled
             && event.action == Action.RIGHT_CLICK_BLOCK
             && event.item?.itemNexusClass == NexusClass.Builder
             && event.item?.type == Material.STICK
@@ -106,7 +106,7 @@ class BuilderEffects : Effects() {
     fun jumpBoost() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.JUMP,
@@ -125,7 +125,7 @@ class BuilderEffects : Effects() {
     fun burnInSunTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.location.block.lightFromSky >= 15 // no block above head
             && player.world.isClearWeather // isn't raining or thundering
             && player.equipment?.helmet == null // doesn't have a helmet
@@ -149,7 +149,7 @@ class BuilderEffects : Effects() {
     fun burnDeathMessage(event: PlayerDeathEvent) {
         if (
             event.entity.uniqueId in burningPlayers
-            && event.entity.world.nexusClassesEnabled
+            && event.entity.world.nexusEnabled
         ) {
             event.deathMessage = "${event.entity.name} forgot their hard hat"
             burningPlayers.remove(event.entity.uniqueId) // remove from burning players
@@ -161,7 +161,7 @@ class BuilderEffects : Effects() {
     fun helmetDegradeTask() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.nexusClass == NexusClass.Builder
-            && player.world.nexusClassesEnabled
+            && player.world.nexusEnabled
             && player.location.block.lightFromSky >= 15 // no block above head
             && player.world.isClearWeather // isn't raining or thundering
             && player.equipment?.helmet != null // has a helmet

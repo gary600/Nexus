@@ -1,22 +1,30 @@
-package xyz.gary600.nexusclasses.effects
+package xyz.gary600.nexus.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
-import xyz.gary600.nexusclasses.NexusClasses
+import xyz.gary600.nexus.Nexus
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
 /**
- * The base class of the various Effects classes. Simplifies registering event handlers and tasks
+ * The base class of the various Effects objects. Simplifies registering event handlers and tasks
  */
 abstract class Effects : Listener {
+
+    private var registered = false
+
     /**
      * Register this Effects' event handlers and tasks with Bukkit
      */
     fun register() {
+        // Prevent registering multiple times
+        if (registered) {
+            throw Exception("This Effects class has already been registered")
+        }
+
         // Register event handlers normally
-        Bukkit.getServer().pluginManager.registerEvents(this, NexusClasses.instance)
+        Bukkit.getServer().pluginManager.registerEvents(this, Nexus.instance)
 
         // Use reflection to find all annotated functions
         this::class.declaredMemberFunctions // for each declared member function (not static)
@@ -24,12 +32,14 @@ abstract class Effects : Listener {
             .filter { (_, ann) -> ann != null } // skip it if the annotation is not found
             .forEach { (fn, ann) ->
             Bukkit.getServer().scheduler.runTaskTimer( // register the task by wrapping it in a TaskWrapper
-                NexusClasses.instance,
+                Nexus.instance,
                 TaskWrapper(this, fn),
                 ann!!.delay,
                 ann.period
             )
         }
+
+        registered = true
     }
 
     // Internal wrapper

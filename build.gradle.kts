@@ -1,5 +1,5 @@
-group = "xyz.gary600.nexusclasses"
-version = "0.2.0"
+group = "xyz.gary600.nexus"
+version = "0.3.0"
 
 
 plugins {
@@ -33,8 +33,8 @@ dependencies {
 tasks {
     shadowJar { // "fat jar" build
         // Relocate libraries inside plugin package to prevent conflict with other plugins that use them
-        relocate("co.aikar.commands", "xyz.gary600.nexusclasses.aikar.commands") // ACF
-        relocate("co.aikar.locales", "xyz.gary600.nexusclasses.aikar.locales") // ACF dependency
+        relocate("co.aikar.commands", "xyz.gary600.nexus.aikar.commands") // ACF
+        relocate("co.aikar.locales", "xyz.gary600.nexus.aikar.locales") // ACF dependency
     }
 
     build {

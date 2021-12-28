@@ -1,18 +1,18 @@
-package xyz.gary600.nexusclasses
+package xyz.gary600.nexus
 
 import co.aikar.commands.BukkitCommandManager
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
-import xyz.gary600.nexusclasses.effects.*
+import xyz.gary600.nexus.effects.*
 import java.lang.ClassCastException
 import java.lang.IllegalArgumentException
 import java.util.UUID
 import kotlin.collections.HashMap
 
 /**
- * NexusClasses: custom character class plugin for CMURPGA's Nexus RP
+ * Nexus: custom plugin for CMURPGA's Nexus RP, implementing character classes
  */
-class NexusClasses : JavaPlugin() {
+class Nexus : JavaPlugin() {
     val classItemKey = NamespacedKey(this, "classitem")
 
     // The collection of all player data
@@ -22,7 +22,7 @@ class NexusClasses : JavaPlugin() {
 
     init {
         if (instance_internal != null) {
-            throw Exception("Only one NexusClasses instance may exist")
+            throw Exception("Only one Nexus instance may exist")
         }
         // Store singleton instance
         instance_internal = this
@@ -32,7 +32,7 @@ class NexusClasses : JavaPlugin() {
         // Format playerdata
         val pdOut = ArrayList<Map<String, Any>>()
         for ((uuid, pd) in playerData) {
-            val map: MutableMap<String, Any> = pd.serialize().toMutableMap()
+            val map = pd.serialize().toMutableMap()
             map["uuid"] = uuid.toString()
             pdOut.add(map)
         }
@@ -77,31 +77,32 @@ class NexusClasses : JavaPlugin() {
                 logger.warning("Skipping incorrectly formatted world UUID")
             }
         }
-        logger.info("Enabled class effects in ${worlds.size} worlds")
+        logger.info("Enabled Nexus in ${worlds.size} worlds")
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)
 
-        // Register command
-        commandManager.registerCommand(ClassCommand())
+        // Register commands
+        commandManager.registerCommand(ClassCommand)
+        commandManager.registerCommand(NexusCommand)
 
         // Register effects
-        BuilderEffects().register()
-        MinerEffects().register()
-        ArtistEffects().register()
-        WarriorEffects().register()
-        ClassItemEffects().register()
+        BuilderEffects.register()
+        MinerEffects.register()
+        ArtistEffects.register()
+        WarriorEffects.register()
+        ClassItemEffects.register()
     }
 
     companion object {
         // Singleton instance
         // Note: cannot use Kotlin-style singleton because Bukkit's API requires a constructor to exist
-        var instance_internal: NexusClasses? = null
+        var instance_internal: Nexus? = null
             private set
 
         // Wrapper to clean up plugin references: since nothing should ever interact with the singleton instance
         // before the plugin is instantiated, it's fine to throw an NPE if something does
-        val instance: NexusClasses
-            get() = instance_internal ?: throw NullPointerException("NexusClasses has not yet been instantiated")
+        val instance: Nexus
+            get() = instance_internal ?: throw NullPointerException("Nexus has not yet been instantiated")
     }
 }

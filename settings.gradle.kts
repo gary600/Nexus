@@ -1,2 +1,2 @@
-rootProject.name = "NexusClasses"
+rootProject.name = "Nexus"
 
