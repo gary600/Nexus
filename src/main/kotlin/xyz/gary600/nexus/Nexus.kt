@@ -1,32 +1,34 @@
 package xyz.gary600.nexus
 
-import co.aikar.commands.BukkitCommandManager
-import org.bukkit.NamespacedKey
-import org.bukkit.plugin.java.JavaPlugin
-import xyz.gary600.nexus.effects.*
 import java.lang.ClassCastException
 import java.lang.IllegalArgumentException
 import java.util.UUID
-import kotlin.collections.HashMap
 
 /**
- * Nexus: custom plugin for CMURPGA's Nexus RP, implementing character classes
+ * Main Nexus singleton, containing most of the internal global API
  */
-class Nexus : JavaPlugin() {
-    val classItemKey = NamespacedKey(this, "classitem")
+object Nexus {
+    var plugin_internal: NexusPlugin? = null
+        internal set
 
-    // The collection of all player data
+    val plugin: NexusPlugin
+        get() = plugin_internal ?: throw IllegalStateException("Nexus plugin accessed before initalization")
+
+    // Wrappers to Plugin stuff
+    val classItemKey get() = plugin.classItemKey
+    private val config get() = plugin.config
+    private val logger get() = plugin.logger
+
+    /**
+     * The collection of Nexus player data
+     */
     val playerData = HashMap<UUID, PlayerData>()
-    // The list of worlds that classes effects work in
-    val worlds = HashSet<UUID>()
 
-    init {
-        if (instance_internal != null) {
-            throw Exception("Only one Nexus instance may exist")
-        }
-        // Store singleton instance
-        instance_internal = this
-    }
+    /**
+     * The set of worlds in which Nexus is enabled
+     */
+    val enabledWorlds = HashSet<UUID>()
+
 
     fun saveData() {
         // Format playerdata
@@ -39,13 +41,13 @@ class Nexus : JavaPlugin() {
         config.set("playerData", pdOut)
 
         // Format world list
-        val worldsOut = worlds.map { it.toString() }
+        val worldsOut = enabledWorlds.map { it.toString() }
         config.set("worlds", worldsOut)
 
-        saveConfig()
+        plugin.saveConfig()
     }
 
-    override fun onEnable() {
+    fun loadData() {
         // Load playerdata
         val configData = config.getMapList("playerData")
         for (data in configData) {
@@ -71,38 +73,12 @@ class Nexus : JavaPlugin() {
         val configWorlds = config.getStringList("worlds")
         for (world in configWorlds) {
             try {
-                worlds.add(UUID.fromString(world))
+                enabledWorlds.add(UUID.fromString(world))
             }
             catch (x: IllegalArgumentException) {
                 logger.warning("Skipping incorrectly formatted world UUID")
             }
         }
-        logger.info("Enabled Nexus in ${worlds.size} worlds")
-
-        // ACF command manager
-        val commandManager = BukkitCommandManager(this)
-
-        // Register commands
-        commandManager.registerCommand(ClassCommand)
-        commandManager.registerCommand(NexusCommand)
-
-        // Register effects
-        BuilderEffects.register()
-        MinerEffects.register()
-        ArtistEffects.register()
-        WarriorEffects.register()
-        ClassItemEffects.register()
-    }
-
-    companion object {
-        // Singleton instance
-        // Note: cannot use Kotlin-style singleton because Bukkit's API requires a constructor to exist
-        var instance_internal: Nexus? = null
-            private set
-
-        // Wrapper to clean up plugin references: since nothing should ever interact with the singleton instance
-        // before the plugin is instantiated, it's fine to throw an NPE if something does
-        val instance: Nexus
-            get() = instance_internal ?: throw NullPointerException("Nexus has not yet been instantiated")
+        logger.info("Enabled Nexus in ${enabledWorlds.size} worlds")
     }
 }

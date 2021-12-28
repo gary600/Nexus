@@ -7,8 +7,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import xyz.gary600.nexus.NexusClass
 import xyz.gary600.nexus.Nexus
+import xyz.gary600.nexus.NexusClass
 import xyz.gary600.nexus.extension.itemNexusClass
 import xyz.gary600.nexus.extension.nexusClass
 import xyz.gary600.nexus.extension.nexusEnabled
@@ -42,7 +42,7 @@ object ArtistEffects : Effects() {
                 classItem.amount = 2
                 // Increase cooldown to 10 seconds (delayed by 1 tick to prevent it from cancelling this event)
                 Bukkit.getScheduler().runTaskLater(
-                    Nexus.instance,
+                    Nexus.plugin,
                     Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) },
                     1
                 )

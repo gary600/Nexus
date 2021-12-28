@@ -6,14 +6,14 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import xyz.gary600.nexus.extension.itemNexusClass
 
-enum class NexusClass(private val id: Byte?) {
+enum class NexusClass {
     // Normal Minecraft character
-    Mundane(null),
+    Mundane,
 
-    Builder(1),
-    Miner(2),
-    Warrior(3),
-    Artist(4);
+    Builder,
+    Miner,
+    Warrior,
+    Artist;
 
     fun createClassItem(type: Material, name: String): ItemStack {
         val item = ItemStack(type, 1)
@@ -38,8 +38,6 @@ enum class NexusClass(private val id: Byte?) {
         return item
     }
 
-    fun toByte(): Byte = id ?: 0.toByte()
-
     companion object {
         /**
          * Parse a NexusClass from a string
@@ -51,18 +49,6 @@ enum class NexusClass(private val id: Byte?) {
             "warrior" -> Warrior
             "artist" -> Artist
             else -> null
-        }
-
-        /**
-         * Parse a NexusClass from a byte
-         */
-        fun fromByte(b: Byte): NexusClass? = when (b) {
-            // Do not parse anything to Mundane
-            1.toByte() -> Builder
-            2.toByte() -> Miner
-            3.toByte() -> Warrior
-            4.toByte() -> Artist
-            else -> null // includes Mundane
         }
     }
 }

@@ -24,7 +24,7 @@ abstract class Effects : Listener {
         }
 
         // Register event handlers normally
-        Bukkit.getServer().pluginManager.registerEvents(this, Nexus.instance)
+        Bukkit.getServer().pluginManager.registerEvents(this, Nexus.plugin)
 
         // Use reflection to find all annotated functions
         this::class.declaredMemberFunctions // for each declared member function (not static)
@@ -32,7 +32,7 @@ abstract class Effects : Listener {
             .filter { (_, ann) -> ann != null } // skip it if the annotation is not found
             .forEach { (fn, ann) ->
             Bukkit.getServer().scheduler.runTaskTimer( // register the task by wrapping it in a TaskWrapper
-                Nexus.instance,
+                Nexus.plugin,
                 TaskWrapper(this, fn),
                 ann!!.delay,
                 ann.period

@@ -6,24 +6,24 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
-import xyz.gary600.nexus.NexusClass
 import xyz.gary600.nexus.Nexus
+import xyz.gary600.nexus.NexusClass
 import xyz.gary600.nexus.PlayerData
 
 // Extension functions/properties for Bukkit types to reduce code repetition
 
 /**
- * Tracks this player's PlayerData
+ * Get this player's PlayerData
  */
 val Player.nexusPlayerData: PlayerData
     // Get this player's PlayerData, or create it if it doesn't exist
     get() {
-        val data = Nexus.instance.playerData[uniqueId]
+        val data = Nexus.playerData[uniqueId]
 
         // If there's no data for this player, create it and store it in the map
         return if (data == null) {
             val newData = PlayerData()
-            Nexus.instance.playerData[uniqueId] = newData
+            Nexus.playerData[uniqueId] = newData
             newData
         }
         // Otherwise return it
@@ -33,14 +33,14 @@ val Player.nexusPlayerData: PlayerData
     }
 
 /**
- * Tracks this player's class
+ * Get or set this player's class
  */
 var Player.nexusClass: NexusClass
     get() = this.nexusPlayerData.nexusClass
     set(x) {this.nexusPlayerData.nexusClass = x}
 
 /**
- * Tracks if this player is subscribed to debug messages
+ * Get or set if this player is subscribed to debug messages
  */
 var Player.debugMessages: Boolean
     get() = this.nexusPlayerData.debugMessages
@@ -63,37 +63,51 @@ fun CommandSender.nexusMessage(msg: String) {
 }
 
 /**
- * Tracks if this ItemMeta marks a class item
+ * Get or set this ItemMeta's Nexus class
  */
 var ItemMeta.itemNexusClass: NexusClass?
-    get() =
-        persistentDataContainer.get( // Get the class item tag
-            Nexus.instance.classItemKey,
-            PersistentDataType.BYTE
-        )
-            ?.let(NexusClass::fromByte) // Parse it to a NexusClass
+    get() {
+        // If it doesn't have the tag or it isn't a String, null
+        if (!persistentDataContainer.has(
+            Nexus.classItemKey,
+            PersistentDataType.STRING
+        )) {
+            return null
+        }
+
+        // Get the class item tag as string and parse it to as Nexusclass, fail silently
+        return persistentDataContainer.get(
+            Nexus.classItemKey,
+            PersistentDataType.STRING
+        )?.let(NexusClass::fromString) // Parse it to a NexusClass
+    }
     set(x) {
-        persistentDataContainer.set(
-            Nexus.instance.classItemKey,
-            PersistentDataType.BYTE,
-            x?.toByte() ?: 0 // 0 if Mundane
-        )
+        if (x == NexusClass.Mundane || x == null) {
+            persistentDataContainer.remove(Nexus.classItemKey)
+        }
+        else {
+            persistentDataContainer.set(
+                Nexus.classItemKey,
+                PersistentDataType.STRING,
+                x.name
+            )
+        }
     }
 
 /**
- * Tracks if this ItemStack is a class item
+ * Get or set this ItemStack's Nexus class
  */
 var ItemStack.itemNexusClass: NexusClass? // wrapper around ItemMeta property
     get() = itemMeta?.itemNexusClass
     set(x) { itemMeta?.itemNexusClass = x }
 
 /**
- * Tracks if class effects are enabled in this world
+ * Get or set if Nexus is enabled in this world
  */
 var World.nexusEnabled: Boolean
-    get() = this.uid in Nexus.instance.worlds
+    get() = this.uid in Nexus.enabledWorlds
     set(x) {
-        Nexus.instance.worlds.let {
+        Nexus.enabledWorlds.let {
             when (x) {
                 true -> it.add(this.uid)
                 false -> it.remove(this.uid)

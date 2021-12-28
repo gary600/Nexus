@@ -30,12 +30,12 @@ object NexusCommand : BaseCommand() {
             }
             true -> {
                 player.world.nexusEnabled = true
-                Nexus.instance.saveData()
+                Nexus.saveData()
                 player.nexusMessage("Enabled Nexus for this world")
             }
             false -> {
                 player.world.nexusEnabled = false
-                Nexus.instance.saveData()
+                Nexus.saveData()
                 player.nexusMessage("Disabled Nexus for this world")
             }
         }
@@ -45,7 +45,7 @@ object NexusCommand : BaseCommand() {
     @Syntax("<enabled>")
     fun commandDebug(player: Player, enabled: Boolean) {
         player.debugMessages = enabled
-        Nexus.instance.saveData()
+        Nexus.saveData()
         if (enabled) {
             player.nexusMessage("You will now receive debug messages")
         }
