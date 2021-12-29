@@ -117,5 +117,5 @@ var World.nexusEnabled: Boolean
                 false -> it.remove(uid)
             }
         }
-        Nexus.saveWorlds()
+        Nexus.saveEnabledWorlds()
     }

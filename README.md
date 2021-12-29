@@ -1,7 +1,6 @@
 # Nexus
-This is a custom Bukkit/Spigot plugin written specifically for CMURPGA's
-Nexus Minecraft RP. It manages custom buffs and debuffs based on the
-player's chosen class.
+This is a custom Bukkit/Spigot plugin written specifically for CMURPGA's Nexus Minecraft RP. It manages custom buffs and
+debuffs based on the player's chosen class.
 
 ## Class command: `/nexusclass`, alias `/class`
 ### Subcommand `/nexusclass choose <class>`:
@@ -13,8 +12,8 @@ Selects your own class
 Gets your own class or another player's class
 
 ### Subcommand `/nexusclass item`:
-Gives you the specific item (the "class item") used to activate a class's ability,
-if applicable (Builder, Artist, and Miner). Class items cannot be removed from your inventory.
+Gives you the specific item (the "class item") used to activate a class's ability, if applicable (Builder, Artist, and
+Miner). Class items cannot be removed from your inventory.
 
 ### Admin subcommand `/nexusclass set <class> <player>`:
 *Requires permission `nexus.class.set`*
@@ -29,6 +28,11 @@ Enables or disables debug messages. Very spammy, but useful for debugging
 *Requires permission `nexus.configure`*
 
 Enables or disables the plugin in the current world. Class effects only occur in enabled worlds.
+
+### Admin subcommand `/nexus reload`:
+*Requires permission `nexus.configure`*
+
+Safely reloads player data and enabled worlds. Always prefer this over doing `/reload` when modifying Nexus files!
 
 ## Classes and implementation
 Builder (`NexusClass.Builder`, effects in `effects.BuilderEffects`):

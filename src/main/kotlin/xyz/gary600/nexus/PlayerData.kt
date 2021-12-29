@@ -1,6 +1,7 @@
 package xyz.gary600.nexus
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import java.io.File
@@ -47,8 +48,12 @@ data class PlayerData(
             }
 
             // Deserialize (Kotlin should fill in defaults)
-            //TODO: Handle deserialization exceptions
-            return Nexus.json.decodeFromString<PlayerData>(file.readText())
+            return try {
+                Nexus.json.decodeFromString<PlayerData>(file.readText())
+            } catch (x: SerializationException) {
+                Nexus.logger.severe("Failed to parse playerdata file for uuid $uuid: $x")
+                null
+            }
         }
     }
 }

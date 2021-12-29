@@ -1,9 +1,10 @@
-package xyz.gary600.nexus
+package xyz.gary600.nexus.commands
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import xyz.gary600.nexus.Nexus
 import xyz.gary600.nexus.extension.nexusDebug
 import xyz.gary600.nexus.extension.nexusEnabled
 import xyz.gary600.nexus.extension.nexusMessage
@@ -61,7 +62,8 @@ object NexusCommand : BaseCommand() {
         Nexus.enabledWorlds.clear()
         // Reload config data
         Nexus.playerData.clear() // playerdata is lazy-loaded, so this'll reload players as needed
-        Nexus.loadWorlds()
+        Nexus.logger.info("Unloaded all playerdata")
+        Nexus.loadEnabledWorlds()
         sender.nexusMessage("Reload complete: enabled Nexus in ${Nexus.enabledWorlds.size} worlds")
     }
 }

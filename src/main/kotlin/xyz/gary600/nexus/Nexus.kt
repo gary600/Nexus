@@ -1,11 +1,14 @@
 package xyz.gary600.nexus
 
 import co.aikar.commands.BukkitCommandManager
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
+import xyz.gary600.nexus.commands.ClassCommand
+import xyz.gary600.nexus.commands.NexusCommand
 import xyz.gary600.nexus.effects.*
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -30,7 +33,7 @@ class Nexus : JavaPlugin() {
 
     override fun onEnable() {
         // Load worlds
-        loadWorlds()
+        loadEnabledWorlds()
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)
@@ -63,7 +66,7 @@ class Nexus : JavaPlugin() {
         val logger get() = plugin.logger
 
         // JSON serializer
-        internal val json = Json {
+        val json = Json {
             prettyPrint = true
             ignoreUnknownKeys = true
         }
@@ -81,7 +84,7 @@ class Nexus : JavaPlugin() {
         /**
          * Load the set of enabled worlds from the file
          */
-        fun loadWorlds() {
+        fun loadEnabledWorlds() {
             enabledWorlds.clear()
 
             // If file doesn't exist, just clear
@@ -90,21 +93,26 @@ class Nexus : JavaPlugin() {
             }
 
             // Otherwise, load
-            //TODO: Handle deserialization exceptions
-            enabledWorlds += json.decodeFromString<HashSet<String>>(plugin.enabledWorldsFile.readText()).mapNotNull {
-                try {
-                    UUID.fromString(it)
-                } catch (x: IllegalArgumentException) {
-                    logger.warning("Skipping invalid world UUID")
-                    null
-                }
+            try {
+                enabledWorlds += json.decodeFromString<HashSet<String>>(plugin.enabledWorldsFile.readText())
+                    .mapNotNull {
+                        try {
+                            UUID.fromString(it)
+                        } catch (x: IllegalArgumentException) {
+                            logger.warning("Skipping invalid world UUID")
+                            null
+                        }
+                    }
+            }
+            catch (x: SerializationException) {
+                logger.severe("Failed to parse enabled worlds list: $x")
             }
         }
 
         /**
          * Save the set of enabled worlds to the file
          */
-        fun saveWorlds() {
+        fun saveEnabledWorlds() {
             // Create data folder if it doesn't exist
             if (!plugin.dataFolder.exists()) {
                 plugin.dataFolder.mkdirs()
