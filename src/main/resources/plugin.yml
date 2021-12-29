@@ -1,7 +1,7 @@
 name: Nexus
 version: 0.3.0
 author: gary600
-main: xyz.gary600.nexus.NexusPlugin
+main: xyz.gary600.nexus.Nexus
 api-version: 1.17
 
 permissions:
