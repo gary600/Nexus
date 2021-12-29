@@ -1,11 +1,13 @@
 package xyz.gary600.nexus
 
-import java.lang.ClassCastException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.lang.IllegalArgumentException
 import java.util.UUID
 
 /**
- * Main Nexus singleton, containing most of the internal global API
+ * Main Nexus singleton, containing much of the internal global API
  */
 object Nexus {
     var plugin_internal: NexusPlugin? = null
@@ -16,8 +18,13 @@ object Nexus {
 
     // Wrappers to Plugin stuff
     val classItemKey get() = plugin.classItemKey
-    private val config get() = plugin.config
-    private val logger get() = plugin.logger
+    val logger get() = plugin.logger
+
+    // JSON serializer
+    internal val json = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+    }
 
     /**
      * The collection of Nexus player data
@@ -29,56 +36,38 @@ object Nexus {
      */
     val enabledWorlds = HashSet<UUID>()
 
+    /**
+     * Load the set of enabled worlds from the file
+     */
+    fun loadWorlds() {
+        enabledWorlds.clear()
 
-    fun saveData() {
-        // Format playerdata
-        val pdOut = ArrayList<Map<String, Any>>()
-        for ((uuid, pd) in playerData) {
-            val map = pd.serialize().toMutableMap()
-            map["uuid"] = uuid.toString()
-            pdOut.add(map)
+        // If file doesn't exist, just clear
+        if (!plugin.enabledWorldsFile.exists()) {
+            return
         }
-        config.set("playerData", pdOut)
 
-        // Format world list
-        val worldsOut = enabledWorlds.map { it.toString() }
-        config.set("worlds", worldsOut)
-
-        plugin.saveConfig()
+        // Otherwise, load
+        //TODO: Handle deserialization exceptions
+        enabledWorlds += json.decodeFromString<HashSet<String>>(plugin.enabledWorldsFile.readText()).mapNotNull {
+            try {
+                UUID.fromString(it)
+            } catch (x: IllegalArgumentException) {
+                logger.warning("Skipping invalid world UUID")
+                null
+            }
+        }
     }
 
-    fun loadData() {
-        // Load playerdata
-        val configData = config.getMapList("playerData")
-        for (data in configData) {
-            try {
-                @Suppress("UNCHECKED_CAST") // More knowledge about Kotlin required
-                val pd = PlayerData.deserialize(data as Map<String, Any>)
-                val uuid = UUID.fromString(data["uuid"] as String)
-                playerData[uuid] = pd
-            }
-            // Skip player if it doesn't fit the format
-            catch (x: IllegalArgumentException) {
-                logger.warning("Skipping incorrectly formatted player UUID")
-                continue
-            }
-            catch (x: ClassCastException) {
-                logger.warning("Skipping badly parsed playerdata")
-                continue
-            }
+    /**
+     * Save the set of enabled worlds to the file
+     */
+    fun saveWorlds() {
+        // Create data folder if it doesn't exist
+        if (!plugin.dataFolder.exists()) {
+            plugin.dataFolder.mkdirs()
         }
-        logger.info("Loaded playerdata for ${playerData.size} players")
 
-        // Load worlds
-        val configWorlds = config.getStringList("worlds")
-        for (world in configWorlds) {
-            try {
-                enabledWorlds.add(UUID.fromString(world))
-            }
-            catch (x: IllegalArgumentException) {
-                logger.warning("Skipping incorrectly formatted world UUID")
-            }
-        }
-        logger.info("Enabled Nexus in ${enabledWorlds.size} worlds")
+        plugin.enabledWorldsFile.writeText(json.encodeToString(enabledWorlds.map { it.toString() }))
     }
 }

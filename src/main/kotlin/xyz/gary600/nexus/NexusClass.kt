@@ -1,5 +1,6 @@
 package xyz.gary600.nexus
 
+import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
@@ -9,6 +10,7 @@ import xyz.gary600.nexus.extension.itemNexusClass
 /**
  * The various character classes in Nexus
  */
+@Serializable
 enum class NexusClass {
     // Normal Minecraft character
     Mundane,

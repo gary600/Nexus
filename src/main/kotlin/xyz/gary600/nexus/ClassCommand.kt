@@ -20,7 +20,6 @@ object ClassCommand : BaseCommand() {
     @CommandPermission("nexus.class.choose")
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         player.nexusClass = nexusClass
-        Nexus.saveData()
         player.nexusMessage("Your class is now ${nexusClass.name}")
     }
 
@@ -30,7 +29,6 @@ object ClassCommand : BaseCommand() {
     @CommandPermission("nexus.class.set")
     fun commandSet(sender: CommandSender, player: OnlinePlayer, nexusClass: NexusClass) {
         player.player.nexusClass = nexusClass
-        Nexus.saveData()
         player.player.nexusMessage("Your class has been set to ${nexusClass.name}")
         sender.nexusMessage("Set ${player.player.displayName}'s class to ${nexusClass.name}")
     }

@@ -13,44 +13,48 @@ import xyz.gary600.nexus.PlayerData
 // Extension functions/properties for Bukkit types to reduce code repetition
 
 /**
- * Get this player's PlayerData
+ * Get this player's PlayerData. Loaded lazily from files as needed, and created if it doesn't exist yet
  */
-val Player.nexusPlayerData: PlayerData
-    // Get this player's PlayerData, or create it if it doesn't exist
-    get() {
-        val data = Nexus.playerData[uniqueId]
+val Player.playerData: PlayerData
+    get() =
+        Nexus.playerData[uniqueId] // Get from loaded data if loaded
+        ?: PlayerData.load(uniqueId)?.also { // Load it if it exists but is unloaded
+            Nexus.playerData[uniqueId] = it
 
-        // If there's no data for this player, create it and store it in the map
-        return if (data == null) {
-            val newData = PlayerData()
-            Nexus.playerData[uniqueId] = newData
-            newData
+            Nexus.logger.info("Loaded playerdata for player $displayName")
         }
-        // Otherwise return it
-        else {
-            data
+        ?: PlayerData().also { // Otherwise, create and save new playerdata
+            Nexus.playerData[uniqueId] = it // Store to loaded
+            it.save(uniqueId) // Store to file
+
+            Nexus.logger.info("Created new playerdata for player $displayName")
         }
-    }
 
 /**
  * Get or set this player's class
  */
 var Player.nexusClass: NexusClass
-    get() = this.nexusPlayerData.nexusClass
-    set(x) {this.nexusPlayerData.nexusClass = x}
+    get() = playerData.nexusClass
+    set(x) {
+        playerData.nexusClass = x
+        playerData.save(uniqueId)
+    }
 
 /**
  * Get or set if this player is subscribed to debug messages
  */
-var Player.debugMessages: Boolean
-    get() = this.nexusPlayerData.debugMessages
-    set(x) {this.nexusPlayerData.debugMessages = x}
+var Player.nexusDebug: Boolean
+    get() = playerData.debug
+    set(x) {
+        playerData.debug = x
+        playerData.save(uniqueId)
+    }
 
 /**
  * Sends a debug message to the player if they're subscribed to them
  */
 fun Player.nexusDebugMessage(msg: String) {
-    if (debugMessages) {
+    if (nexusDebug) {
         nexusMessage("§oDEBUG:§r $msg")
     }
 }
@@ -105,12 +109,13 @@ var ItemStack.itemNexusClass: NexusClass?
  * Get or set if Nexus is enabled in this world
  */
 var World.nexusEnabled: Boolean
-    get() = this.uid in Nexus.enabledWorlds
+    get() = uid in Nexus.enabledWorlds
     set(x) {
         Nexus.enabledWorlds.let {
             when (x) {
-                true -> it.add(this.uid)
-                false -> it.remove(this.uid)
+                true -> it.add(uid)
+                false -> it.remove(uid)
             }
         }
+        Nexus.saveWorlds()
     }

@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import xyz.gary600.nexus.extension.debugMessages
+import xyz.gary600.nexus.extension.nexusDebug
 import xyz.gary600.nexus.extension.nexusEnabled
 import xyz.gary600.nexus.extension.nexusMessage
 
@@ -18,8 +18,7 @@ object NexusCommand : BaseCommand() {
     @Subcommand("debug")
     @Syntax("<enabled>")
     fun commandDebug(player: Player, enabled: Boolean) {
-        player.debugMessages = enabled
-        Nexus.saveData()
+        player.nexusDebug = enabled
         if (enabled) {
             player.nexusMessage("You will now receive debug messages")
         }
@@ -44,30 +43,25 @@ object NexusCommand : BaseCommand() {
             }
             true -> {
                 player.world.nexusEnabled = true
-                Nexus.saveData()
                 player.nexusMessage("Enabled Nexus for this world")
             }
             false -> {
                 player.world.nexusEnabled = false
-                Nexus.saveData()
                 player.nexusMessage("Disabled Nexus for this world")
             }
         }
     }
 
     @Subcommand("reload")
-    @Description("Reloads the Nexus config files safely")
+    @Description("Safely reloads Nexus' data files")
     @CommandPermission("nexus.configure")
     fun commandReload(sender: CommandSender) {
         // Clear loaded config data
         Nexus.playerData.clear()
         Nexus.enabledWorlds.clear()
         // Reload config data
-        Nexus.loadData()
-        sender.nexusMessage(
-            "Reload complete:" +
-                " loaded playerdata for ${Nexus.playerData.size} players" +
-                " and enabled in ${Nexus.enabledWorlds.size} worlds"
-        )
+        Nexus.playerData.clear() // playerdata is lazy-loaded, so this'll reload players as needed
+        Nexus.loadWorlds()
+        sender.nexusMessage("Reload complete: enabled Nexus in ${Nexus.enabledWorlds.size} worlds")
     }
 }

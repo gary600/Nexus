@@ -4,6 +4,7 @@ import co.aikar.commands.BukkitCommandManager
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexus.effects.*
+import java.io.File
 
 /**
  * Nexus: custom plugin for CMURPGA's Nexus RP, implementing character classes
@@ -11,6 +12,9 @@ import xyz.gary600.nexus.effects.*
  */
 class NexusPlugin : JavaPlugin() {
     val classItemKey = NamespacedKey(this, "classitem")
+
+    val playerDataFolder = File(dataFolder, "playerData")
+    val enabledWorldsFile = File(dataFolder, "enabledWorlds.json")
 
     init {
         if (Nexus.plugin_internal != null) {
@@ -22,7 +26,7 @@ class NexusPlugin : JavaPlugin() {
 
     override fun onEnable() {
         // Load playerdata and worlds
-        Nexus.loadData()
+        Nexus.loadWorlds()
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)

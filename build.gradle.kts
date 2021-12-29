@@ -3,7 +3,8 @@ version = "0.3.0"
 
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "7.1.0" // needed to build a fat jar w/ dependencies included
     idea // IntelliJ integration
 }
@@ -26,6 +27,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0") // Kotlin stdlib
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0") // Kotlin reflection
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2") // Kotlin serialization
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT") // Spigot API (don't include in output)
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT") // ACF command framework
 }
