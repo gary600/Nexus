@@ -1,4 +1,4 @@
-package xyz.gary600.nexus.extension
+package xyz.gary600.nexus
 
 import org.bukkit.World
 import org.bukkit.command.CommandSender
@@ -6,9 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
-import xyz.gary600.nexus.Nexus
-import xyz.gary600.nexus.NexusClass
-import xyz.gary600.nexus.PlayerData
+import xyz.gary600.nexus.classes.NexusClass
 
 // Extension functions/properties for Bukkit types to reduce code repetition
 

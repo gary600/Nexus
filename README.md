@@ -15,7 +15,7 @@ Gets your own class or another player's class
 Gives you the specific item (the "class item") used to activate a class's ability, if applicable (Builder, Artist, and
 Miner). Class items cannot be removed from your inventory.
 
-### Admin subcommand `/nexusclass set <class> <player>`:
+### Admin subcommand `/nexusclass set <player> <class>`:
 *Requires permission `nexus.class.set`*
 
 Sets a player's class

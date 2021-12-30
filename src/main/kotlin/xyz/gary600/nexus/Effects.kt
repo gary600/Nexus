@@ -1,8 +1,7 @@
-package xyz.gary600.nexus.effects
+package xyz.gary600.nexus
 
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
-import xyz.gary600.nexus.Nexus
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.findAnnotation
 
@@ -10,7 +9,6 @@ import kotlin.reflect.full.findAnnotation
  * The base class of the various Effects objects. Allows registering event handlers and tasks via a declarative API
  */
 abstract class Effects : Listener {
-
     private var registered = false
 
     /**

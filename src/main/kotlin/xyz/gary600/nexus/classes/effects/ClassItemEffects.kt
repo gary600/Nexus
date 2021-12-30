@@ -1,4 +1,4 @@
-package xyz.gary600.nexus.effects
+package xyz.gary600.nexus.classes.effects
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -6,10 +6,11 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import xyz.gary600.nexus.extension.itemNexusClass
-import xyz.gary600.nexus.extension.nexusClass
-import xyz.gary600.nexus.extension.nexusEnabled
-import xyz.gary600.nexus.extension.nexusDebugMessage
+import xyz.gary600.nexus.Effects
+import xyz.gary600.nexus.itemNexusClass
+import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.nexusDebugMessage
 
 /**
  * Miscellaneous effects to manage class items

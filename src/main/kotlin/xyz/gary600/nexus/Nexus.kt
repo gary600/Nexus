@@ -7,9 +7,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
-import xyz.gary600.nexus.commands.ClassCommand
-import xyz.gary600.nexus.commands.NexusCommand
-import xyz.gary600.nexus.effects.*
+import xyz.gary600.nexus.classes.ClassCommand
+import xyz.gary600.nexus.classes.effects.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.UUID
@@ -19,7 +18,7 @@ import java.util.UUID
  */
 class Nexus : JavaPlugin() {
     // Properties that require the plugin to be loaded to be used
-    val classItemKey = NamespacedKey(this, "classitem")
+    val classItemKey = NamespacedKey(this, "class_item")
     val playerDataFolder = File(dataFolder, "playerData")
     val enabledWorldsFile = File(dataFolder, "enabledWorlds.json")
 
@@ -48,6 +47,7 @@ class Nexus : JavaPlugin() {
         ArtistEffects.register()
         WarriorEffects.register()
         ClassItemEffects.register()
+        MiscEffects.register()
     }
 
     // Singleton features

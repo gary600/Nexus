@@ -1,4 +1,4 @@
-package xyz.gary600.nexus.effects
+package xyz.gary600.nexus.classes.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -7,10 +7,12 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import xyz.gary600.nexus.NexusClass
-import xyz.gary600.nexus.extension.nexusClass
-import xyz.gary600.nexus.extension.nexusEnabled
-import xyz.gary600.nexus.extension.nexusDebugMessage
+import xyz.gary600.nexus.Effects
+import xyz.gary600.nexus.TimerTask
+import xyz.gary600.nexus.classes.NexusClass
+import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.nexusDebugMessage
 
 /**
  * All of the effects of the Warrior class

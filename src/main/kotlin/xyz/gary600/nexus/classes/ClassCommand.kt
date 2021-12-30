@@ -1,4 +1,4 @@
-package xyz.gary600.nexus.commands
+package xyz.gary600.nexus.classes
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
@@ -6,10 +6,9 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import xyz.gary600.nexus.NexusClass
-import xyz.gary600.nexus.extension.nexusClass
-import xyz.gary600.nexus.extension.nexusEnabled
-import xyz.gary600.nexus.extension.nexusMessage
+import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.nexusMessage
 
 @Suppress("unused")
 @CommandAlias("nexusclass|class")

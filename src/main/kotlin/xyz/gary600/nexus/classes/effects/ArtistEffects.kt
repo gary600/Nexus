@@ -1,4 +1,4 @@
-package xyz.gary600.nexus.effects
+package xyz.gary600.nexus.classes.effects
 
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -7,12 +7,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import xyz.gary600.nexus.Effects
 import xyz.gary600.nexus.Nexus
-import xyz.gary600.nexus.NexusClass
-import xyz.gary600.nexus.extension.itemNexusClass
-import xyz.gary600.nexus.extension.nexusClass
-import xyz.gary600.nexus.extension.nexusEnabled
-import xyz.gary600.nexus.extension.nexusDebugMessage
+import xyz.gary600.nexus.TimerTask
+import xyz.gary600.nexus.classes.NexusClass
+import xyz.gary600.nexus.itemNexusClass
+import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.nexusDebugMessage
 import java.util.UUID
 
 /**

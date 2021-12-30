@@ -1,13 +1,13 @@
-package xyz.gary600.nexus.commands
+package xyz.gary600.nexus
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import xyz.gary600.nexus.Nexus
-import xyz.gary600.nexus.extension.nexusDebug
-import xyz.gary600.nexus.extension.nexusEnabled
-import xyz.gary600.nexus.extension.nexusMessage
+import xyz.gary600.nexus.nexusDebug
+import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.nexusMessage
 
 /**
  * Command for miscellaneous functions
@@ -57,10 +57,6 @@ object NexusCommand : BaseCommand() {
     @Description("Safely reloads Nexus' data files")
     @CommandPermission("nexus.configure")
     fun commandReload(sender: CommandSender) {
-        // Clear loaded config data
-        Nexus.playerData.clear()
-        Nexus.enabledWorlds.clear()
-        // Reload config data
         Nexus.playerData.clear() // playerdata is lazy-loaded, so this'll reload players as needed
         Nexus.logger.info("Unloaded all playerdata")
         Nexus.loadEnabledWorlds()
