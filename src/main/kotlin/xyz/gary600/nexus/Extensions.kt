@@ -31,7 +31,7 @@ val Player.playerData: PlayerData
 /**
  * Get or set this player's class
  */
-var Player.nexusClass: NexusClass
+inline var Player.nexusClass: NexusClass
     get() = playerData.nexusClass
     set(x) {
         playerData.nexusClass = x
@@ -41,12 +41,32 @@ var Player.nexusClass: NexusClass
 /**
  * Get or set if this player is subscribed to debug messages
  */
-var Player.nexusDebug: Boolean
+inline var Player.nexusDebug: Boolean
     get() = playerData.debug
     set(x) {
         playerData.debug = x
         playerData.save(uniqueId)
     }
+
+/**
+ * Get or set this player's Corruption level
+ */
+inline var Player.corruption: Int
+    //TODO: make scoreboard objective name configurable
+    get() = scoreboard.getObjective("Corruption")?.getScore(name)?.score ?: 0
+    set(x) {
+        scoreboard.getObjective("Corruption")?.getScore(name)?.score = x
+    }
+
+inline val Player.corruptionTier: CorruptionTier
+    get() = if (corruption >= 150) CorruptionTier.Tier3
+            else when(corruption) {
+                in 50..99 -> CorruptionTier.Tier1
+                in 100..149 -> CorruptionTier.Tier2
+                else -> CorruptionTier.Tier0
+            }
+
+enum class CorruptionTier { Tier0, Tier1, Tier2, Tier3 }
 
 /**
  * Sends a debug message to the player if they're subscribed to them

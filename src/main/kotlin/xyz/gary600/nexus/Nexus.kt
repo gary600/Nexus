@@ -12,6 +12,7 @@ import xyz.gary600.nexus.classes.effects.*
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Nexus plugin class, also exposing much of the internal global API via a companion object
@@ -72,9 +73,9 @@ class Nexus : JavaPlugin() {
         }
 
         /**
-         * The collection of Nexus player data
+         * The collection of Nexus player data. Needs to be thread-safe
          */
-        val playerData = HashMap<UUID, PlayerData>()
+        val playerData = ConcurrentHashMap<UUID, PlayerData>()
 
         /**
          * The set of worlds in which Nexus is enabled

@@ -19,11 +19,6 @@ data class PlayerData(
      * Whether or not this player has subscribed to debug messages
      */
     var debug: Boolean = false,
-
-    /**
-     * This player's Spore level
-     */
-    var sporeLevel: Double = 0.0
 ) {
     /**
      * Saves this PlayerData to its corresponding file
