@@ -17,10 +17,10 @@ import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexus.Effects
 import xyz.gary600.nexus.TimerTask
 import xyz.gary600.nexus.classes.NexusClass
-import xyz.gary600.nexus.itemNexusClass
-import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.classes.itemNexusClass
+import xyz.gary600.nexus.classes.nexusClass
 import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebugMessage
+import xyz.gary600.nexus.nexusDebug
 import java.util.*
 
 /**
@@ -43,7 +43,7 @@ object BuilderEffects : Effects() {
         ) {
             event.isCancelled = true
             event.damage = 0.0 // Cancelling doesn't seem to work on the CMURPGA server
-            entity.nexusDebugMessage("Builder perk: Fall damage cancelled")
+            entity.nexusDebug("Builder perk: Fall damage cancelled")
         }
     }
 
@@ -82,6 +82,9 @@ object BuilderEffects : Effects() {
                     Particle.BLOCK_DUST,
                     block.location.add(0.5, 0.5, 0.5),
                     32,
+                    0.5,
+                    0.5,
+                    0.5,
                     block.blockData
                 )
                 // Play magic noise
@@ -92,13 +95,13 @@ object BuilderEffects : Effects() {
                     1.0f
                 )
 
-                event.player.nexusDebugMessage("Builder perk: Block transmuted")
+                event.player.nexusDebug("Builder perk: Block transmuted")
             }
             else {
                 // Play fail noise
                 block.world.playSound(block.location, Sound.BLOCK_GRAVEL_HIT, 1.0f, 1.0f)
 
-                event.player.nexusDebugMessage("Cannot transmute block")
+                event.player.nexusDebug("Cannot transmute block")
             }
         }
     }
@@ -112,7 +115,7 @@ object BuilderEffects : Effects() {
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.JUMP,
-                20,
+                19,
                 1, // 1 means level 2
                 false,
                 false,
@@ -135,7 +138,7 @@ object BuilderEffects : Effects() {
         }.forEach { player ->
             burningPlayers.add(player.uniqueId)
             player.fireTicks = 40
-            player.nexusDebugMessage("Builder weakness: burning in sunlight")
+            player.nexusDebug("Builder weakness: burning in sunlight")
         }
     }
     // Removes players from the burning players list if they stop burning
@@ -180,7 +183,7 @@ object BuilderEffects : Effects() {
             }
             player.equipment?.helmet?.itemMeta = meta
 
-            player.nexusDebugMessage("Builder weakness: helmet degrading in sunlight")
+            player.nexusDebug("Builder weakness: helmet degrading in sunlight")
         }
     }
 }

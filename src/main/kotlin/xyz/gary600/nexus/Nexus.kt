@@ -9,6 +9,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexus.classes.ClassCommand
 import xyz.gary600.nexus.classes.effects.*
+import xyz.gary600.nexus.corruption.CorruptionEffects
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.UUID
@@ -43,12 +44,15 @@ class Nexus : JavaPlugin() {
         commandManager.registerCommand(NexusCommand)
 
         // Register effects
+        MiscEffects.register()
+        // Classes module
         BuilderEffects.register()
         MinerEffects.register()
         ArtistEffects.register()
         WarriorEffects.register()
         ClassItemEffects.register()
-        MiscEffects.register()
+        // Corruption module
+        CorruptionEffects.register()
     }
 
     // Singleton features

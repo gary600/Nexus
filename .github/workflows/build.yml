@@ -1,15 +1,24 @@
-name: Build Nexus (FIXME)
+name: Build Nexus
 on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+#      - name: Build Spigot
+#        uses: SpraxDev/Action-SpigotMC@v3
+#        with:
+#          verisons: 1.18.1 # only targeting latest
+#          buildToolProvider: SpigotMC # use official Spigot build tools
+
       - name: Fetch source
         uses: actions/checkout@v2
-      - name: Build
+
+      - name: Build plugin
         run: |
           chmod +x gradlew
           ./gradlew shadowJar
+
       - name: Upload jar as artifact
         uses: actions/upload-artifact@v2
         with:
