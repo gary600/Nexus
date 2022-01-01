@@ -11,10 +11,10 @@ import xyz.gary600.nexus.Effects
 import xyz.gary600.nexus.Nexus
 import xyz.gary600.nexus.TimerTask
 import xyz.gary600.nexus.classes.NexusClass
-import xyz.gary600.nexus.itemNexusClass
-import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.classes.itemNexusClass
+import xyz.gary600.nexus.classes.nexusClass
 import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebugMessage
+import xyz.gary600.nexus.nexusDebug
 import java.util.UUID
 
 /**
@@ -47,7 +47,7 @@ object ArtistEffects : Effects() {
                     Nexus.plugin,
                     Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) }
                 )
-                event.player.nexusDebugMessage("Artist perk: free end pearl")
+                event.player.nexusDebug("Artist perk: free end pearl")
             }
         }
     }
@@ -62,7 +62,7 @@ object ArtistEffects : Effects() {
         }.forEach { player ->
             dissolvingPlayers.add(player.uniqueId)
             player.damage(1.0) // Half-heart
-            player.nexusDebugMessage("Artist weakness: dissolving in water")
+            player.nexusDebug("Artist weakness: dissolving in water")
         }
     }
 

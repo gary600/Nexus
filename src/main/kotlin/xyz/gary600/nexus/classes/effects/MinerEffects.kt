@@ -14,10 +14,10 @@ import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexus.Effects
 import xyz.gary600.nexus.TimerTask
 import xyz.gary600.nexus.classes.NexusClass
-import xyz.gary600.nexus.itemNexusClass
-import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.classes.itemNexusClass
+import xyz.gary600.nexus.classes.nexusClass
 import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebugMessage
+import xyz.gary600.nexus.nexusDebug
 
 /**
  * All of the effects of the Miner class
@@ -40,7 +40,7 @@ object MinerEffects : Effects() {
         ) {
             // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
-            event.player.nexusDebugMessage("Miner perk: Free emerald")
+            event.player.nexusDebug("Miner perk: Free emerald")
         }
     }
 
@@ -60,13 +60,13 @@ object MinerEffects : Effects() {
             // Set night vision potion effect for 11 seconds (less than 10 seconds causes a warning blinking)
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.NIGHT_VISION,
-                220,
+                219,
                 0,
                 false,
                 false,
                 false
             ))
-            player.nexusDebugMessage("Miner perk: Free night vision")
+            player.nexusDebug("Miner perk: Free night vision")
         }
     }
 
@@ -80,13 +80,13 @@ object MinerEffects : Effects() {
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.FAST_DIGGING,
-                20,
+                19,
                 1, // haste 2
                 false,
                 false,
                 false
             ))
-            player.nexusDebugMessage("Miner perk: Free haste")
+            player.nexusDebug("Miner perk: Free haste")
         }
     }
 
@@ -101,7 +101,7 @@ object MinerEffects : Effects() {
             && event.damager is Zombie
         ) {
             event.damage *= 1.2
-            entity.nexusDebugMessage("Miner weakness: increased damage from zombies")
+            entity.nexusDebug("Miner weakness: increased damage from zombies")
         }
     }
 }

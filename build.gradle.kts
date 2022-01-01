@@ -18,7 +18,7 @@ java {
 // Places to fetch packages from
 repositories {
     mavenCentral() // Central package directory, for misc packages
-    mavenLocal() // for net.minecraft.server, since it can't be distributed (must have built Spigot at least once!)
+//    mavenLocal() // for net.minecraft.server, since it can't be distributed (must have built Spigot at least once!)
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") // Spigot dependency
     maven("https://oss.sonatype.org/content/repositories/snapshots") // Spigot sub-dependency
     maven("https://repo.aikar.co/content/groups/aikar/") // ACF command framework
@@ -30,9 +30,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0") // Kotlin reflection
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2") // Kotlin serialization
     compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") // Spigot API (don't include in output)
-    compileOnly("org.spigotmc:spigot:1.18.1-R0.1-SNAPSHOT") // Spigot internals and net.minecraft.server (don't include in output)
+//    compileOnly("org.spigotmc:spigot:1.18.1-R0.1-SNAPSHOT") // Spigot internals and net.minecraft.server (don't include in output)
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT") // ACF command framework
-    implementation("org.apache.commons:commons-text:1.9") // string manipulation utils
+//    implementation("org.apache.commons:commons-text:1.9") // string manipulation utils
 
 }
 
@@ -41,7 +41,7 @@ tasks {
         // Relocate libraries inside plugin package to prevent conflict with other plugins that use them
         relocate("co.aikar.commands", "xyz.gary600.nexus.lib.aikar.commands") // ACF
         relocate("co.aikar.locales", "xyz.gary600.nexus.lib.aikar.locales") // ACF dependency
-        relocate("org.apache.commons", "xyz.gary600.nexus.lib.commons") // Apache Commons utils
+//        relocate("org.apache.commons", "xyz.gary600.nexus.lib.commons") // Apache Commons utils
     }
 
     build {

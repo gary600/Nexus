@@ -4,10 +4,6 @@ import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import xyz.gary600.nexus.Nexus
-import xyz.gary600.nexus.nexusDebug
-import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusMessage
 
 /**
  * Command for miscellaneous functions

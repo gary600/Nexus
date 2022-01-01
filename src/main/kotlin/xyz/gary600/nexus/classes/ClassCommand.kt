@@ -6,7 +6,6 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import xyz.gary600.nexus.nexusClass
 import xyz.gary600.nexus.nexusEnabled
 import xyz.gary600.nexus.nexusMessage
 

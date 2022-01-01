@@ -7,10 +7,10 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import xyz.gary600.nexus.Effects
-import xyz.gary600.nexus.itemNexusClass
-import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.classes.itemNexusClass
+import xyz.gary600.nexus.classes.nexusClass
 import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebugMessage
+import xyz.gary600.nexus.nexusDebug
 
 /**
  * Miscellaneous effects to manage class items
@@ -30,7 +30,7 @@ object ClassItemEffects : Effects() {
         ) {
             event.item?.amount = 0 // delete the item
             event.isCancelled = true // cancel interaction
-            event.player.nexusDebugMessage("Removed class item from wrong class or in wrong world")
+            event.player.nexusDebug("Removed class item from wrong class or in wrong world")
         }
     }
 
@@ -45,12 +45,12 @@ object ClassItemEffects : Effects() {
             // Players of that class can't drop the item
             if (event.player.nexusClass == event.itemDrop.itemStack.itemNexusClass) {
                 event.isCancelled = true
-                event.player.nexusDebugMessage("Prevented dropping class item")
+                event.player.nexusDebug("Prevented dropping class item")
             }
             // Other classes can drop to delete it
             else {
                 event.itemDrop.remove()
-                event.player.nexusDebugMessage("Removed class item from wrong class")
+                event.player.nexusDebug("Removed class item from wrong class")
             }
         }
     }
@@ -75,7 +75,7 @@ object ClassItemEffects : Effects() {
             && event.whoClicked.world.nexusEnabled
         ) {
             event.isCancelled = true
-            (event.whoClicked as? Player)?.nexusDebugMessage("Prevented moving class item")
+            (event.whoClicked as? Player)?.nexusDebug("Prevented moving class item")
         }
     }
     // Prevent dragging class items
@@ -86,7 +86,7 @@ object ClassItemEffects : Effects() {
             && event.whoClicked.world.nexusEnabled
         ) {
             event.isCancelled = true
-            (event.whoClicked as? Player)?.nexusDebugMessage("Prevented dragging class item")
+            (event.whoClicked as? Player)?.nexusDebug("Prevented dragging class item")
         }
     }
 }

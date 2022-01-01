@@ -10,9 +10,9 @@ import org.bukkit.potion.PotionEffectType
 import xyz.gary600.nexus.Effects
 import xyz.gary600.nexus.TimerTask
 import xyz.gary600.nexus.classes.NexusClass
-import xyz.gary600.nexus.nexusClass
+import xyz.gary600.nexus.classes.nexusClass
 import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebugMessage
+import xyz.gary600.nexus.nexusDebug
 
 /**
  * All of the effects of the Warrior class
@@ -37,7 +37,7 @@ object WarriorEffects : Effects() {
             )
         ) {
             event.entity.fireTicks = 80 // equivalent to Fire Aspect 1
-            damager.nexusDebugMessage("Warrior perk: fire aspect")
+            damager.nexusDebug("Warrior perk: fire aspect")
         }
     }
 
@@ -55,7 +55,7 @@ object WarriorEffects : Effects() {
             )
         ) {
             event.damage += 6 // equivalent to Strength II
-            damager.nexusDebugMessage("Warrior perk: golden strength")
+            damager.nexusDebug("Warrior perk: golden strength")
         }
     }
 
@@ -68,7 +68,7 @@ object WarriorEffects : Effects() {
         }.forEach { player ->
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.FIRE_RESISTANCE,
-                20,
+                19,
                 0,
                 false,
                 false,
@@ -94,7 +94,7 @@ object WarriorEffects : Effects() {
                 false,
                 false
             ))
-            player.nexusDebugMessage("Warrior weakness: mining fatigue from iron weapons")
+            player.nexusDebug("Warrior weakness: mining fatigue from iron weapons")
         }
     }
 }
