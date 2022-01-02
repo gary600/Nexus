@@ -7,14 +7,10 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import xyz.gary600.nexus.Effects
-import xyz.gary600.nexus.Nexus
-import xyz.gary600.nexus.TimerTask
+import xyz.gary600.nexus.*
 import xyz.gary600.nexus.classes.NexusClass
 import xyz.gary600.nexus.classes.itemNexusClass
 import xyz.gary600.nexus.classes.nexusClass
-import xyz.gary600.nexus.nexusEnabled
-import xyz.gary600.nexus.nexusDebug
 import java.util.UUID
 
 /**
@@ -26,7 +22,7 @@ object ArtistEffects : Effects() {
     private val dissolvingPlayers = HashSet<UUID>()
 
     // Perk: free end pearl at all times
-    //TODO: prevent giving when clicking a chest/other interactable block
+    //TODO minor: prevent giving when clicking a chest/other interactable block
     @EventHandler
     fun freeEndPearl(event: PlayerInteractEvent) {
         if (
@@ -43,10 +39,9 @@ object ArtistEffects : Effects() {
             ) {
                 classItem.amount = 2
                 // Increase cooldown to 10 seconds (deferred by a tick to prevent it from cancelling this event)
-                Bukkit.getScheduler().runTask(
-                    Nexus.plugin,
-                    Runnable { event.player.setCooldown(Material.ENDER_PEARL, 200) }
-                )
+                defer {
+                    event.player.setCooldown(Material.ENDER_PEARL, 200)
+                }
                 event.player.nexusDebug("Artist perk: free end pearl")
             }
         }

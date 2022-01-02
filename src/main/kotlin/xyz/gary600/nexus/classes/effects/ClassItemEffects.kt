@@ -60,7 +60,7 @@ object ClassItemEffects : Effects() {
         // If (item is shift-clicked OR item is normally moved) AND player is in a class world
         if (
             // If shift clicked from player's inventory
-            //TODO: Allow shift-clicking into armor slots
+            //TODO minor: Allow shift-clicking into armor slots
             ((
                 event.click.isShiftClick
                 && event.clickedInventory == event.whoClicked.inventory // inventory *is* the player's
@@ -71,7 +71,7 @@ object ClassItemEffects : Effects() {
                 event.clickedInventory != event.whoClicked.inventory // inventory is *not* the player's
                 && event.cursor?.itemNexusClass != null // item *on* cursor is the class item
             ))
-            //TODO: Also disable moving via number keys
+            //TODO minor: Also disable moving via number keys
             && event.whoClicked.world.nexusEnabled
         ) {
             event.isCancelled = true

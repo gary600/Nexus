@@ -5,11 +5,14 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import xyz.gary600.nexus.classes.NexusClass
+import xyz.gary600.nexus.corruption.CorruptionTier
 import java.io.File
 import java.util.UUID
 
 @Serializable
 data class PlayerData(
+    // Persistent items
+
     /**
      * This player's class
      */
@@ -19,6 +22,16 @@ data class PlayerData(
      * Whether or not this player has subscribed to debug messages
      */
     var debug: Boolean = false,
+
+    /**
+     * This player's max Corruption tier, used to track when they've increased a tier.
+     */
+    var maxCorruptionTier: CorruptionTier = CorruptionTier.Tier0,
+
+    /**
+     * The progress toward healing a level of this player's Corruption
+     */
+    var corruptionHealProgress: Int = 0
 ) {
     /**
      * Saves this PlayerData to its corresponding file
@@ -29,9 +42,7 @@ data class PlayerData(
             Nexus.plugin.playerDataFolder.mkdirs()
         }
         // Store serialized
-        File(Nexus.plugin.playerDataFolder, "$uuid.json").writeText(
-            Nexus.json.encodeToString(this)
-        )
+        File(Nexus.plugin.playerDataFolder, "$uuid.json").writeText(Nexus.json.encodeToString(this))
     }
 
     companion object {

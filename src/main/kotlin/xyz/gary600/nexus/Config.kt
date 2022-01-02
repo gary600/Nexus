@@ -1,8 +1,9 @@
 package xyz.gary600.nexus
 
 import kotlinx.serialization.Serializable
-import java.util.*
-import kotlin.collections.HashSet
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import java.util.UUID
 
 /**
  * The global Nexus configuration
@@ -19,9 +20,23 @@ class Config(
      */
     val corruptionScoreboard: String = "deaths"
 ) {
+    fun save() {
+        // create data folder if needed
+        if (!Nexus.plugin.dataFolder.exists()) {
+            Nexus.plugin.dataFolder.mkdirs()
+        }
+
+        Nexus.plugin.configFile.writeText(Nexus.json.encodeToString(this))
+    }
+
     companion object {
-        fun load() {
-            TODO()
+        fun load(): Config {
+            // If no file, create default and save
+            if (!Nexus.plugin.configFile.exists()) {
+                return Config().also { it.save() }
+            }
+
+            return Nexus.json.decodeFromString(Nexus.plugin.configFile.readText())
         }
     }
 }

@@ -55,7 +55,7 @@ object NexusCommand : BaseCommand() {
     fun commandReload(sender: CommandSender) {
         Nexus.playerData.clear() // playerdata is lazy-loaded, so this'll reload players as needed
         Nexus.logger.info("Unloaded all playerdata")
-        Nexus.loadEnabledWorlds()
-        sender.nexusMessage("Reload complete: enabled Nexus in ${Nexus.enabledWorlds.size} worlds")
+        Nexus.loadConfig()
+        sender.nexusMessage("Reload complete: enabled Nexus in ${Nexus.config.enabledWorlds.size} worlds")
     }
 }

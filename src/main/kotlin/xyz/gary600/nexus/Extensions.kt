@@ -55,13 +55,13 @@ fun CommandSender.nexusMessage(msg: String) {
  * Get or set if Nexus is enabled in this world
  */
 var World.nexusEnabled: Boolean
-    get() = uid in Nexus.enabledWorlds
+    get() = uid in Nexus.config.enabledWorlds
     set(x) {
-        Nexus.enabledWorlds.let {
+        Nexus.config.enabledWorlds.let {
             when (x) {
                 true -> it.add(uid)
                 false -> it.remove(uid)
             }
         }
-        Nexus.saveEnabledWorlds()
+        Nexus.config.save()
     }

@@ -10,9 +10,8 @@ import org.bukkit.event.entity.EntityPotionEffectEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import xyz.gary600.nexus.Effects
-import xyz.gary600.nexus.TimerTask
-import xyz.gary600.nexus.nexusEnabled
+import xyz.gary600.nexus.*
+import kotlin.math.max
 import kotlin.random.Random
 
 /**
@@ -25,18 +24,11 @@ object CorruptionEffects : Effects() {
     fun sporeParticles() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.world.nexusEnabled
+            && player.health > 0.0
             && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && player.corruptionTier >= CorruptionTier.Tier1
         }.forEach { player ->
-            // Effect field radii
-            //TODO: clarify particles
-            val (offsetXZ: Double, offsetY: Double) = when (player.corruptionTier) {
-                CorruptionTier.Tier1 -> 0.5 to 1.0 // "around the player"
-                CorruptionTier.Tier2 -> 2.0 to 2.0
-                CorruptionTier.Tier3 -> 5.0 to 3.0
-                else -> 0.0 to 0.0 // unreachable
-            }
-
+            //TODO: clarify particle visuals
             player.world.spawnParticle(
                 Particle.WARPED_SPORE,
                 player.location,
@@ -46,9 +38,6 @@ object CorruptionEffects : Effects() {
                     CorruptionTier.Tier3 -> 10
                     else -> 0 // unreachable
                 },
-//                offsetXZ,
-//                offsetY,
-//                offsetXZ
                 // cover the player's bounding box
                 0.5,
                 1.0,
@@ -109,6 +98,8 @@ object CorruptionEffects : Effects() {
                     false
                 ))
             }
+
+            player.nexusDebug("Gave potion effects")
         }
     }
 
@@ -122,7 +113,11 @@ object CorruptionEffects : Effects() {
             && entity.world.nexusEnabled
             && event.newEffect?.type == PotionEffectType.POISON // if event is *giving* poison to the player
         ) {
-            entity.removePotionEffect(PotionEffectType.POISON)
+            // remove on next tick (since it hasn't been added yet when this is called)
+            defer {
+                entity.removePotionEffect(PotionEffectType.POISON)
+                entity.nexusDebug("Removed poison")
+            }
         }
     }
     @EventHandler
@@ -135,6 +130,7 @@ object CorruptionEffects : Effects() {
             && event.cause == EntityDamageEvent.DamageCause.POISON
         ) {
             event.isCancelled = true
+            entity.nexusDebug("Eliminated poison damage")
         }
     }
 
@@ -155,30 +151,33 @@ object CorruptionEffects : Effects() {
 
     // Poison to mobs in range
     @TimerTask(0, 20)
-    fun poisonMobsTier2() { // poison 1 10% chance every 10 seconds within 2 blocks
+    fun poisonMobsTier2() { // poison 1 10% chance every second within 2 blocks
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.world.nexusEnabled
+            && player.health > 0.0
             && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && player.corruptionTier == CorruptionTier.Tier2
         }.forEach { player ->
             for (entity in player.getNearbyEntities(2.0, 2.0, 2.0)) {
                 if (entity is LivingEntity && entity !is Player && Random.Default.nextDouble() <= 0.1) { // 10% chance
                     entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 200, 0))
+                    player.nexusDebug("Poisoned mob")
                 }
             }
         }
     }
-    @TimerTask(0, 3)
-    fun poisonMobsTier3() { // poison 2 instantly
+    @TimerTask(0, 10)
+    fun poisonMobsTier3() { // poison 2 instantly within 5 blocks
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.world.nexusEnabled
+            && player.health > 0.0
             && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && player.corruptionTier == CorruptionTier.Tier3
         }.forEach { player ->
             for (entity in player.getNearbyEntities(5.0, 5.0, 5.0)) {
                 if (entity is LivingEntity && entity !is Player) {
-                    //TODO: fix not damaging mobs until leaving range
                     entity.addPotionEffect(PotionEffect(PotionEffectType.POISON, 200, 1))
+                    player.nexusDebug("Poisoned mob")
                 }
             }
         }
@@ -196,6 +195,7 @@ object CorruptionEffects : Effects() {
             && event.reason == EntityTargetEvent.TargetReason.CLOSEST_PLAYER // regular random mob aggros
         ) {
             event.isCancelled = true
+            target.nexusDebug("Cancelled mob aggro")
         }
     }
 
@@ -204,6 +204,7 @@ object CorruptionEffects : Effects() {
     fun corruptBlocks() {
         Bukkit.getServer().onlinePlayers.filter { player ->
             player.world.nexusEnabled
+            && player.health > 0.0
             && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && player.corruptionTier >= CorruptionTier.Tier2
         }.forEach { player ->
@@ -227,13 +228,59 @@ object CorruptionEffects : Effects() {
                             // Plants except Crops -> Warped Fungus
                             if (
                                 Tag.REPLACEABLE_PLANTS.isTagged(block.type) // tall grass, etc
-                                || Tag.FLOWERS.isTagged(block.type) // small flowers
+                                || Tag.FLOWERS.isTagged(block.type) // flowers, including tall flowers
                             ) {
                                 block.setType(Material.WARPED_FUNGUS, false) // don't send block update
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Title messages from "Order" when players reach a new tier
+    @TimerTask(0, 100)
+    fun orderMessage() {
+        Bukkit.getServer().onlinePlayers.filter { player ->
+            player.world.nexusEnabled
+            && player.health > 0.0 // don't show the message until they've respawned
+            && player.corruptionTier > player.maxCorruptionTier
+        }.forEach { player ->
+            player.sendTitle(
+                when(player.corruptionTier) {
+                    CorruptionTier.Tier1 -> "§3§lIt has Begun"
+                    CorruptionTier.Tier2 -> "§3§lIt Cannot be Prevented"
+                    CorruptionTier.Tier3 -> "§3§lWe are Power"
+                    else -> "" // unreachable
+                },
+                null,
+                20,
+                200,
+                20
+            )
+            player.maxCorruptionTier = player.corruptionTier // save new tier as max
+            player.nexusDebug("Sent Corruption tier message")
+        }
+    }
+
+    // Beacons heal corruption: 1 per minute per beacon level
+    @EventHandler
+    fun healCorruption(event: EntityPotionEffectEvent) {
+        val entity = event.entity
+        if (
+            entity is Player
+            && entity.world.nexusEnabled
+            && entity.corruption > 0
+            && event.cause == EntityPotionEffectEvent.Cause.BEACON
+        ) {
+            // Event is triggered every 4 seconds, so after 15 triggers, remove 1 corruption, capping at 0 corruption
+            entity.corruptionHealProgress += 1
+            entity.nexusDebug("Increased progress toward healing Corruption")
+            if (entity.corruptionHealProgress >= 14) {
+                entity.corruptionHealProgress = 0
+                entity.corruption = max(entity.corruption - 1, 0)
+                entity.nexusDebug("Removed a level of Corruption")
             }
         }
     }

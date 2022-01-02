@@ -2,8 +2,6 @@ package xyz.gary600.nexus
 
 import co.aikar.commands.BukkitCommandManager
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
@@ -11,7 +9,6 @@ import xyz.gary600.nexus.classes.ClassCommand
 import xyz.gary600.nexus.classes.effects.*
 import xyz.gary600.nexus.corruption.CorruptionEffects
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -22,7 +19,7 @@ class Nexus : JavaPlugin() {
     // Properties that require the plugin to be loaded to be used
     val classItemKey = NamespacedKey(this, "class_item")
     val playerDataFolder = File(dataFolder, "playerData")
-    val enabledWorldsFile = File(dataFolder, "enabledWorlds.json")
+    val configFile = File(dataFolder, "config.json")
 
     init {
         if (plugin_internal != null) {
@@ -33,8 +30,8 @@ class Nexus : JavaPlugin() {
     }
 
     override fun onEnable() {
-        // Load worlds
-        loadEnabledWorlds()
+        // Load config
+        loadConfig()
 
         // ACF command manager
         val commandManager = BukkitCommandManager(this)
@@ -77,53 +74,23 @@ class Nexus : JavaPlugin() {
         }
 
         /**
+         * Global Nexus configuration, such as enabled worlds
+         */
+        var config = Config()
+            private set
+
+        /**
          * The collection of Nexus player data. Needs to be thread-safe
          */
         val playerData = ConcurrentHashMap<UUID, PlayerData>()
 
-        /**
-         * The set of worlds in which Nexus is enabled
-         */
-        val enabledWorlds = HashSet<UUID>()
-
-        /**
-         * Load the set of enabled worlds from the file
-         */
-        fun loadEnabledWorlds() {
-            enabledWorlds.clear()
-
-            // If file doesn't exist, just clear
-            if (!plugin.enabledWorldsFile.exists()) {
-                return
-            }
-
-            // Otherwise, load
+        fun loadConfig() {
             try {
-                enabledWorlds += json.decodeFromString<HashSet<String>>(plugin.enabledWorldsFile.readText())
-                    .mapNotNull {
-                        try {
-                            UUID.fromString(it)
-                        } catch (x: IllegalArgumentException) {
-                            logger.warning("Skipping invalid world UUID")
-                            null
-                        }
-                    }
+                config = Config.load()
             }
             catch (x: SerializationException) {
-                logger.severe("Failed to parse enabled worlds list: $x")
+                logger.severe("Failed to load config, using defaults")
             }
-        }
-
-        /**
-         * Save the set of enabled worlds to the file
-         */
-        fun saveEnabledWorlds() {
-            // Create data folder if it doesn't exist
-            if (!plugin.dataFolder.exists()) {
-                plugin.dataFolder.mkdirs()
-            }
-
-            plugin.enabledWorldsFile.writeText(json.encodeToString(enabledWorlds.map { it.toString() }))
         }
     }
 }
