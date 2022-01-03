@@ -5,19 +5,19 @@ main: xyz.gary600.nexus.Nexus
 api-version: 1.18
 
 permissions:
-  nexus.class.choose:
+  nexus.classes.choose:
     description: Allows choosing one's own class
     default: true
 
-  nexus.class.set:
+  nexus.classes.set:
     description: Allows setting other players' classes
     default: op
 
-  nexus.class.*:
+  nexus.classes.*:
     default: op
     children:
-      - nexus.class.choose
-      - nexus.class.set
+      - nexus.classes.choose
+      - nexus.classes.set
 
   nexus.configure:
     description: Allows changing configuration, such as enabled worlds
@@ -26,7 +26,7 @@ permissions:
   nexus.*:
     default: op
     children:
-      - nexus.class.*
+      - nexus.classes.*
       - nexus.configure
 
 commands:

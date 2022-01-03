@@ -4,7 +4,7 @@ debuffs based on the player's chosen class.
 
 ## Class command: `/nexusclass`, alias `/class`
 ### Subcommand `/nexusclass choose <class>`:
-*Requires permission `nexus.class.choose`*
+*Requires permission `nexus.classes.choose`*
 
 Selects your own class
 
@@ -16,7 +16,7 @@ Gives you the specific item (the "class item") used to activate a class's abilit
 Miner). Class items cannot be removed from your inventory.
 
 ### Admin subcommand `/nexusclass set <player> <class>`:
-*Requires permission `nexus.class.set`*
+*Requires permission `nexus.classes.set`*
 
 Sets a player's class
 

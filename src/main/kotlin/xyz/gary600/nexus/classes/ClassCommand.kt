@@ -16,7 +16,7 @@ object ClassCommand : BaseCommand() {
     @Subcommand("choose|select")
     @Description("Select your class")
     @Syntax("<class>")
-    @CommandPermission("nexus.class.choose")
+    @CommandPermission("nexus.classes.choose")
     fun commandChoose(player: Player, nexusClass: NexusClass) {
         player.nexusClass = nexusClass
         player.nexusMessage("Your class is now ${nexusClass.name}")
@@ -25,7 +25,7 @@ object ClassCommand : BaseCommand() {
     @Subcommand("set")
     @Description("Set another player's class")
     @Syntax("<class> <player>")
-    @CommandPermission("nexus.class.set")
+    @CommandPermission("nexus.classes.set")
     fun commandSet(sender: CommandSender, player: OnlinePlayer, nexusClass: NexusClass) {
         player.player.nexusClass = nexusClass
         player.player.nexusMessage("Your class has been set to ${nexusClass.name}")
