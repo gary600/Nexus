@@ -1,6 +1,7 @@
 package xyz.gary600.nexus.classes.effects
 
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
@@ -134,6 +135,7 @@ object BuilderEffects : Effects() {
             && player.location.block.lightFromSky >= 15 // no block above head
             && player.world.isClearWeather // isn't raining or thundering
             && player.equipment?.helmet == null // doesn't have a helmet
+            && player.gameMode in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
             burningPlayers.add(player.uniqueId)
@@ -170,6 +172,7 @@ object BuilderEffects : Effects() {
             && player.location.block.lightFromSky >= 15 // no block above head
             && player.world.isClearWeather // isn't raining or thundering
             && player.equipment?.helmet != null // has a helmet
+            && player.gameMode in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
             && (player.world.time >= 23460 || player.world.time <= 12535) // same time as zombies
         }.forEach { player ->
             val helmet = player.equipment?.helmet

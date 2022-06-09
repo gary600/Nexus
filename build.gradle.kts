@@ -3,8 +3,8 @@ version = "0.3.0"
 
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.0" // needed to build a fat jar w/ dependencies included
     idea // IntelliJ integration
 }
@@ -26,11 +26,11 @@ repositories {
 
 // Packages to fetch + compile
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0") // Kotlin stdlib
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0") // Kotlin reflection
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2") // Kotlin serialization
-    compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") // Spigot API (don't include in output)
-//    compileOnly("org.spigotmc:spigot:1.18.1-R0.1-SNAPSHOT") // Spigot internals and net.minecraft.server (don't include in output)
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.21") // Kotlin stdlib
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21") // Kotlin reflection
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3") // Kotlin serialization
+    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") // Spigot API (don't include in output)
+//    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // Spigot internals and net.minecraft.server (don't include in output)
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT") // ACF command framework
 //    implementation("org.apache.commons:commons-text:1.9") // string manipulation utils
 

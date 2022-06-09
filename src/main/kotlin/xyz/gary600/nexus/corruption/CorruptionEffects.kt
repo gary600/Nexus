@@ -200,44 +200,44 @@ object CorruptionEffects : Effects() {
     }
 
     // Corrupt nearby grass and dirt into warped nylium
-    @TimerTask(0, 20)
-    fun corruptBlocks() {
-        Bukkit.getServer().onlinePlayers.filter { player ->
-            player.world.nexusEnabled
-            && player.health > 0.0
-            && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
-            && player.corruptionTier >= CorruptionTier.Tier2
-        }.forEach { player ->
-            val range = when (player.corruptionTier) {
-                CorruptionTier.Tier2 -> 2
-                CorruptionTier.Tier3 -> 5
-                else -> 0 // unreachable
-            }
-            for (x in -range..range) {
-                for (y in -range..range) {
-                    for (z in -range..range) {
-                        val block = player.world.getBlockAt(
-                            player.location.add(x.toDouble(), y.toDouble(), z.toDouble())
-                        )
-
-                        if (Random.Default.nextDouble() <= 0.1) { // 10% chance
-                            // Grass and Dirt -> Warped Nylium
-                            if (block.type in arrayOf(Material.GRASS_BLOCK, Material.DIRT)) {
-                                block.setType(Material.WARPED_NYLIUM, false) // don't send block update
-                            }
-                            // Plants except Crops -> Warped Fungus
-                            if (
-                                Tag.REPLACEABLE_PLANTS.isTagged(block.type) // tall grass, etc
-                                || Tag.FLOWERS.isTagged(block.type) // flowers, including tall flowers
-                            ) {
-                                block.setType(Material.WARPED_FUNGUS, false) // don't send block update
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    @TimerTask(0, 20)
+//    fun corruptBlocks() {
+//        Bukkit.getServer().onlinePlayers.filter { player ->
+//            player.world.nexusEnabled
+//            && player.health > 0.0
+//            && player.gameMode in arrayOf(GameMode.SURVIVAL, GameMode.ADVENTURE)
+//            && player.corruptionTier >= CorruptionTier.Tier2
+//        }.forEach { player ->
+//            val range = when (player.corruptionTier) {
+//                CorruptionTier.Tier2 -> 2
+//                CorruptionTier.Tier3 -> 5
+//                else -> 0 // unreachable
+//            }
+//            for (x in -range..range) {
+//                for (y in -range..range) {
+//                    for (z in -range..range) {
+//                        val block = player.world.getBlockAt(
+//                            player.location.add(x.toDouble(), y.toDouble(), z.toDouble())
+//                        )
+//
+//                        if (Random.Default.nextDouble() <= 0.1) { // 10% chance
+//                            // Grass and Dirt -> Warped Nylium
+//                            if (block.type in arrayOf(Material.GRASS_BLOCK, Material.DIRT)) {
+//                                block.setType(Material.WARPED_NYLIUM, false) // don't send block update
+//                            }
+//                            // Plants except Crops -> Warped Fungus
+//                            if (
+//                                Tag.REPLACEABLE_PLANTS.isTagged(block.type) // tall grass, etc
+//                                || Tag.FLOWERS.isTagged(block.type) // flowers, including tall flowers
+//                            ) {
+//                                block.setType(Material.WARPED_FUNGUS, false) // don't send block update
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     // Title messages from "Order" when players reach a new tier
     @TimerTask(0, 100)

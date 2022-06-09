@@ -7,7 +7,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 import xyz.gary600.nexus.classes.ClassCommand
 import xyz.gary600.nexus.classes.effects.*
-import xyz.gary600.nexus.corruption.CorruptionEffects
+//import xyz.gary600.nexus.corruption.CorruptionEffects
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -49,7 +49,7 @@ class Nexus : JavaPlugin() {
         WarriorEffects.register()
         ClassItemEffects.register()
         // Corruption module
-        CorruptionEffects.register()
+        //CorruptionEffects.register() // Not finalized
     }
 
     // Singleton features

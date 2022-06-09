@@ -38,7 +38,8 @@ object MinerEffects : Effects() {
                 Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE
             )
         ) {
-            // We're not allowed to add items to the block drop list for some reason, so just drop it manually where the block is
+            // We're not allowed to add items to the block drop list for some reason,
+            // so just drop it manually where the block is
             event.block.world.dropItemNaturally(event.block.location, ItemStack(Material.EMERALD, 1))
             event.player.nexusDebug("Miner perk: Free emerald")
         }
@@ -81,7 +82,7 @@ object MinerEffects : Effects() {
             player.addPotionEffect(PotionEffect(
                 PotionEffectType.FAST_DIGGING,
                 19,
-                1, // haste 2
+                0, // haste 1
                 false,
                 false,
                 false
