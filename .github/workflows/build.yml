@@ -8,7 +8,7 @@ jobs:
 #      - name: Build Spigot
 #        uses: SpraxDev/Action-SpigotMC@v3
 #        with:
-#          verisons: 1.18.1 # only targeting latest
+#          verisons: 1.19 # only targeting latest
 #          buildToolProvider: SpigotMC # use official Spigot build tools
 
       - name: Fetch source
