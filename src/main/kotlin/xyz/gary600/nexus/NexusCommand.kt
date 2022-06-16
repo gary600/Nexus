@@ -58,4 +58,10 @@ object NexusCommand : BaseCommand() {
         Nexus.loadConfig()
         sender.nexusMessage("Reload complete: enabled Nexus in ${Nexus.config.enabledWorlds.size} worlds")
     }
+
+    @Subcommand("version")
+    @Description("Get the current Nexus version")
+    fun commandVersion(sender: CommandSender) {
+        sender.nexusMessage("Running Nexus version ${Nexus.plugin.description.version}")
+    }
 }

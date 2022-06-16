@@ -57,10 +57,10 @@ fun CommandSender.nexusMessage(msg: String) {
 var World.nexusEnabled: Boolean
     get() = uid in Nexus.config.enabledWorlds
     set(x) {
-        Nexus.config.enabledWorlds.let {
+        Nexus.config.enabledWorlds.apply {
             when (x) {
-                true -> it.add(uid)
-                false -> it.remove(uid)
+                true -> add(uid)
+                false -> remove(uid)
             }
         }
         Nexus.config.save()

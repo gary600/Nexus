@@ -33,7 +33,6 @@ dependencies {
 //    compileOnly("org.spigotmc:spigot:1.19-R0.1-SNAPSHOT") // Spigot internals and net.minecraft.server (don't include in output)
     implementation("co.aikar:acf-bukkit:0.5.0-SNAPSHOT") // ACF command framework
 //    implementation("org.apache.commons:commons-text:1.9") // string manipulation utils
-
 }
 
 tasks {
