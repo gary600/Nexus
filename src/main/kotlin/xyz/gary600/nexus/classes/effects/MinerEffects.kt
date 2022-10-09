@@ -3,6 +3,7 @@ package xyz.gary600.nexus.classes.effects
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
@@ -31,6 +32,7 @@ object MinerEffects : Effects() {
             event.player.nexusClass == NexusClass.Miner
             && event.player.world.nexusEnabled
             && event.player.gameMode != GameMode.CREATIVE // Don't drop for creative mode players
+            && !event.player.inventory.itemInMainHand.containsEnchantment(Enchantment.SILK_TOUCH) // oopsie
             && event.block.type in arrayOf(
                 Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE,
                 Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE,

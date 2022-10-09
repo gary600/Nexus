@@ -62,4 +62,4 @@ Artist (`NexusClass.Artist`, effects in `effects.ArtistEffects`):
 * **\-** take damage in water
 
 ## License
-This plugin is licensed under the Apache 2.0 license.
+This plugin is licensed under the GNU General Public License v3.0.

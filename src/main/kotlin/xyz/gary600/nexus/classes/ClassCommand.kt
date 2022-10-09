@@ -72,7 +72,7 @@ object ClassCommand : BaseCommand() {
         val item = player.nexusClass.createClassItem(type, name)
 
         // Only give class item if player doesn't have one yet
-        if (!player.inventory.containsAtLeast(item, 1)) {
+        if (!player.inventory.containsAtLeast(item, 1) && player.equipment?.helmet?.itemNexusClass == null) {
             player.inventory.addItem(item)
         }
     }
